@@ -52,3 +52,13 @@ function onUpdateBook(bookId) {
     updateBookPrice(bookId, newPrice);
     renderBooks();
 }
+
+function onAddBook() {
+    const title = prompt('Enter Book Title  : ');
+    const price = +prompt('Enter Book Price : ');
+
+    if (!title || !price || price < 0) return;
+
+    addBook(title, price);
+    renderBooks();
+}

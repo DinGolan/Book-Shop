@@ -48,3 +48,43 @@ function updateBookPrice(bookId, newPrice) {
      * gBooks[bookIdx].price = newPrice;
      **/
 }
+
+function addBook(title, price) {
+    const newBook = createBook(title, price);
+    gBooks.push(newBook);
+}
+
+function createBook(title, price) {
+    return {
+        id: generateRandomId(),
+        title,
+        price,
+        imgUrl: generateImageUrl()
+    };
+}
+
+function generateRandomId() {
+    const SIZE = 5;
+
+    const digits       = '0123456789';
+    const upperLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const lowerLetters = 'abcdefghijklmnopqrstuvwxyz';
+    const chars        = upperLetters + lowerLetters + digits;
+    
+    let newId   = '';
+    let randIdx = null;
+    for (let i = 0; i < SIZE; i++) {
+        randIdx = Math.floor(Math.random() * chars.length);
+        newId  += chars.charAt(randIdx);
+    }
+
+    return newId;
+}
+
+function generateImageUrl(title) {
+    const fileName = title.toLowerCase()
+                          .split(' ')
+                          .join('-');
+    
+    return `img/${fileName}.jpg`;
+}
