@@ -3,27 +3,14 @@
 /*********************************/
 'use strict';
 
-/* Global Variables */
-const gBooks = [
-    {
-        id: 'b101',
-        title: 'The Adventures of Lori Ipsi',
-        price: 120,
-        imgUrl: 'img/lori-ipsi.jpg'
-    },
-    {
-        id: 'b102',
-        title: 'World Atlas',
-        price: 300,
-        imgUrl: 'img/world-atlas.jpg'
-    },
-    {
-        id: 'b103',
-        title: 'Zorba the Greek',
-        price: 87,
-        imgUrl: 'img/zorba.jpg'
-    }
-]
+/* Global Variables (Const) */
+const STORAGE_KEY = 'bookDB';
+
+/* Global Variables (Generals) */
+let gBooks = [];
+
+/* Function Calls (Main) */
+_createBooks();
 
 /* Function Implementations */
 function getBooks() {
@@ -33,12 +20,16 @@ function getBooks() {
 function removeBook(bookId) {
     const bookIdx = gBooks.findIndex(book => book.id === bookId);
     if (bookIdx !== -1) gBooks.splice(bookIdx, 1);
+    _saveBooks();
 }
 
 function updateBookPrice(bookId, newPrice) {
     /* Option (1) */
     const book = getBookById(bookId);
-    if (book) book.price = newPrice;
+    if (!book) return;
+    
+    book.price = newPrice;
+    _saveBooks();
 
     /* Option (2) */
     /**
@@ -46,6 +37,7 @@ function updateBookPrice(bookId, newPrice) {
      * if (bookIdx === -1) return;
      * 
      * gBooks[bookIdx].price = newPrice;
+     * _saveBooks();
      **/
 }
 
@@ -54,17 +46,9 @@ function getBookById(bookId) {
 }
 
 function addBook(title, price) {
-    const newBook = createBook(title, price);
+    const newBook = _createBook(title, price);
     gBooks.push(newBook);
-}
-
-function createBook(title, price) {
-    return {
-        id: generateRandomId(),
-        title,
-        price,
-        imgUrl: generateImageUrl()
-    };
+    _saveBooks();
 }
 
 function generateRandomId() {
@@ -93,4 +77,36 @@ function generateImageUrl(title) {
                           .join('-');
     
     return `img/${fileName}.jpg`;
+}
+
+function _createBooks() {
+    const books = loadFromStorage(STORAGE_KEY);
+
+    if (!books || books.length === 0) {
+        gBooks = _generateDefaultBooks();
+        _saveBooks();
+    } else {
+        gBooks = books;
+    }
+}
+
+function _createBook(title, price) {
+    return {
+        id: generateRandomId(),
+        title,
+        price,
+        imgUrl: generateImageUrl()
+    };
+}
+
+function _generateDefaultBooks() {
+    return [
+        _createBook('The Adventures of Lori Ipsi', 120),
+        _createBook('World Atlas', 300),
+        _createBook('Zorba the Greek', 87)
+    ];
+}
+
+function _saveBooks() {
+    saveToStorage(STORAGE_KEY, gBooks);
 }
