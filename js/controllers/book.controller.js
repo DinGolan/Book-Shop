@@ -30,7 +30,7 @@ function renderBooks() {
             <td class="actions">
                 <button class="btn-read">Read</button>
                 <button class="btn-update">Update</button>
-                <button class="btn-delete">Delete</button>
+                <button class="btn-delete" onclick="onRemoveBook('${book.id}')">Delete</button>
             </td>
         </tr>
     `).join('');
@@ -38,4 +38,9 @@ function renderBooks() {
     strHTML += '</tbody>';
 
     ellTable.innerHTML = strHTML;
+}
+
+function onRemoveBook(bookId) {
+    removeBook(bookId);
+    renderBooks();
 }
