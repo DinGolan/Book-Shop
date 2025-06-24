@@ -28,7 +28,7 @@ function renderBooks() {
             <td>${book.title}</td>
             <td>${book.price}</td>
             <td class="actions">
-                <button class="btn-read">Read</button>
+                <button class="btn-read" onclick="onShowBookDetails('${book.id}')">Read</button>
                 <button class="btn-update" onclick="onUpdateBook('${book.id}')">Update</button>
                 <button class="btn-delete" onclick="onRemoveBook('${book.id}')">Delete</button>
             </td>
@@ -55,10 +55,21 @@ function onUpdateBook(bookId) {
 
 function onAddBook() {
     const title = prompt('Enter Book Title  : ');
-    const price = +prompt('Enter Book Price : ');
+    if (!title) return;
 
-    if (!title || !price || price < 0) return;
+    const price = +prompt('Enter Book Price : ');
+    if (!price || price < 0) return;
 
     addBook(title, price);
     renderBooks();
+}
+
+function onShowBookDetails(bookId) {
+    const book = getBookById(bookId);
+    
+    const elModal   = document.querySelector('.book-details-modal');
+    const elContent = elModal.querySelector('.book-details-content');
+    
+    elContent.innerText = JSON.stringify(book, null, 4);
+    elModal.showModal();
 }

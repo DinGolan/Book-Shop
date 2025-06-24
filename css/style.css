@@ -116,3 +116,79 @@ button:hover {
 .add-book-btn:hover {
     background-color: #218838;
 }
+
+/* Dialog */
+.book-details-modal {
+    border: none;
+    border-radius: 12px;
+    background-color: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    font-family: 'Segoe UI', sans-serif;
+    max-width: 400px;
+    padding: 20px 30px;
+    position: relative;
+    width: 90%;
+}
+
+.book-details-modal::backdrop {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.book-details-modal form {
+    margin: 0;
+}
+
+.book-details-modal button:not(.btn-close) {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 20px;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    transition: transform 0.2s ease;
+}
+
+.book-details-modal button:not(.btn-close):hover {
+    transform: scale(1.2);
+}
+
+.book-details-content {
+    color: #333;
+    font-size: 0.95em;
+    margin-top: 20px;
+    white-space: pre-wrap;
+}
+
+.btn-close {
+    align-items: center;
+    border-radius: 50%;
+    border: 2px solid black;
+    background-color: #f2f2f2;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    cursor: pointer;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    width: 40px;
+}
+
+.btn-close:hover {
+    background-color: #ccc;
+    transform: scale(1.1);
+}
+
+.btn-close svg {
+    display: block;
+    height: 20px;
+    fill: none;
+    stroke: black;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    width: 20px;
+}

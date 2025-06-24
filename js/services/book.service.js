@@ -37,7 +37,7 @@ function removeBook(bookId) {
 
 function updateBookPrice(bookId, newPrice) {
     /* Option (1) */
-    const book = gBooks.find(book => book.id === bookId);
+    const book = getBookById(bookId);
     if (book) book.price = newPrice;
 
     /* Option (2) */
@@ -47,6 +47,10 @@ function updateBookPrice(bookId, newPrice) {
      * 
      * gBooks[bookIdx].price = newPrice;
      **/
+}
+
+function getBookById(bookId) {
+    return gBooks.find(book => book.id === bookId);
 }
 
 function addBook(title, price) {
@@ -82,6 +86,8 @@ function generateRandomId() {
 }
 
 function generateImageUrl(title) {
+    if (!title) return 'img/default.jpg' 
+
     const fileName = title.toLowerCase()
                           .split(' ')
                           .join('-');
