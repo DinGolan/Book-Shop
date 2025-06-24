@@ -2,46 +2,89 @@
 /* Exercise - Book Shop (Part 1) */
 /*********************************/
 
+/* Body */
+body {
+    background-color: #f8f8f8;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
 /* Header */
 h1 {
+    color: #333;
+    font-size: 2.5em;
+    margin-bottom: 30px;
     text-align: center;
+    text-shadow: 1px 1px 2px #ccc;
 }
 
 /* Table */
 table {
    border-collapse: collapse;
+   background-color: white;
+   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
    margin: auto;
    width: 60%; 
 }
 
 th, td {
     border: 1px solid lightgray;
-    padding: 10px;
+    padding: 15px;
     text-align: left;
 }
 
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
 th {
-    background-color: lightgray;
+    background-color: #ddd;
+    font-weight: bold;
+}
+
+td:nth-child(1), td:nth-child(3) {
+    white-space: nowrap;
+}
+
+td:nth-child(2) {
+    padding-right: 50px;
+}
+
+td.actions {
+    white-space: nowrap;
+    padding: 10px 6px;
+}
+
+td.actions button {
+    margin: 0;
+    padding: 7px 15px;
 }
 
 /* Buttons */
 button {
     border: none;
-    border-radius: 3px;
+    border-radius: 10px;
     color: white;
     cursor: pointer;
-    margin: 0 2px;
-    padding: 5px 10px;
+    font-weight: bold;
+    margin: 0 4px;
+    padding: 6px 12px;
+    transition: transform 0.1s ease;
+}
+
+button:hover {
+    transform: scale(1.05);
 }
 
 .btn-read {
-    background-color: dodgerblue;
+    background-color: #1e90ff;
 }
 
 .btn-update {
-    background-color: goldenrod;
+    background-color: #daa520;
 }
 
 .btn-delete {
-    background-color: orangered;
+    background-color: #d2691e;
 }
