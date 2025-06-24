@@ -28,14 +28,14 @@ table {
    width: 60%; 
 }
 
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
 th, td {
     border: 1px solid lightgray;
     padding: 15px;
     text-align: left;
-}
-
-tr:nth-child(even) {
-    background-color: #f2f2f2;
 }
 
 th {
