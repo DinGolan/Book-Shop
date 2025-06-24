@@ -36,6 +36,15 @@ function removeBook(bookId) {
 }
 
 function updateBookPrice(bookId, newPrice) {
+    /* Option (1) */
     const book = gBooks.find(book => book.id === bookId);
     if (book) book.price = newPrice;
+
+    /* Option (2) */
+    /**
+     * const bookIdx = gBooks.findIndex(book => book.id === bookId);
+     * if (bookIdx === -1) return;
+     * 
+     * gBooks[bookIdx].price = newPrice;
+     **/
 }

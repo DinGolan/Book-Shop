@@ -29,7 +29,7 @@ function renderBooks() {
             <td>${book.price}</td>
             <td class="actions">
                 <button class="btn-read">Read</button>
-                <button class="btn-update" onclick="onUpdateBook('${book.id}')>Update</button>
+                <button class="btn-update" onclick="onUpdateBook('${book.id}')">Update</button>
                 <button class="btn-delete" onclick="onRemoveBook('${book.id}')">Delete</button>
             </td>
         </tr>
