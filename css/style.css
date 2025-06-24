@@ -20,6 +20,12 @@ h1 {
 }
 
 /* Table */
+.table-container {
+    margin: auto;
+    max-width: 90vw;
+    overflow-x: auto;
+}
+
 table {
    border-collapse: collapse;
    background-color: white;

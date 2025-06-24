@@ -11,49 +11,19 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body>
+<body onload="onInit()">
+
     <!-- Header -->
     <h1>Book Shop</h1>
 
     <!-- Table -->
-    <table>
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Price</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>The Adventures of Lori Ipsi</td>
-                <td>120</td>
-                <td class="actions">
-                    <button class="btn-read">Read</button>
-                    <button class="btn-update">Update</button>
-                    <button class="btn-delete">Delete</button>
-                </td>
-            </tr>
-            <tr>
-                <td>World Atlas</td>
-                <td>300</td>
-                <td class="actions">
-                    <button class="btn-read">Read</button>
-                    <button class="btn-update">Update</button>
-                    <button class="btn-delete">Delete</button>
-                </td>
-            </tr>
-            <tr>
-                <td>Zorba the Greek</td>
-                <td>87</td>
-                <td class="actions">
-                    <button class="btn-read">Read</button>
-                    <button class="btn-update">Update</button>
-                    <button class="btn-delete">Delete</button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <section class="table-container">
+        <table></table>
+    </section>
+
+    <!-- Script -->
+    <script src="js/services/book.service.js"></script>
+    <script src="js/controllers/book.controller.js"></script>
 </body>
 
 </html>

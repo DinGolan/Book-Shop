@@ -3,6 +3,7 @@
 /*********************************/
 'use strict';
 
+/* Global Variables */
 const gBooks = [
     {
         id: 'b101',
@@ -24,6 +25,7 @@ const gBooks = [
     }
 ]
 
+/* Function Implementations */
 function getBooks() {
     return gBooks;
 }
