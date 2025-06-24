@@ -1,0 +1,47 @@
+/*********************************/
+/* Exercise - Book Shop (Part 1) */
+/*********************************/
+
+/* Header */
+h1 {
+    text-align: center;
+}
+
+/* Table */
+table {
+   border-collapse: collapse;
+   margin: auto;
+   width: 60%; 
+}
+
+th, td {
+    border: 1px solid lightgray;
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: lightgray;
+}
+
+/* Buttons */
+button {
+    border: none;
+    border-radius: 3px;
+    color: white;
+    cursor: pointer;
+    margin: 0 2px;
+    padding: 5px 10px;
+}
+
+.btn-read {
+    background-color: dodgerblue;
+}
+
+.btn-update {
+    background-color: goldenrod;
+}
+
+.btn-delete {
+    background-color: orangered;
+}
