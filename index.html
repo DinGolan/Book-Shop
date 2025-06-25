@@ -16,6 +16,12 @@
     <!-- Header -->
     <h1>Book Shop</h1>
 
+    <!-- Input -->
+    <div class="filter-container">
+        <input type="text" placeholder="Search by Title ..." oninput="onFilterByTitle(this.value)">
+        <button class="clear-btn" onclick="onClearFilter()">Clear</button>
+    </div>
+
     <!-- Table -->
     <section class="table-container">
         <table></table>

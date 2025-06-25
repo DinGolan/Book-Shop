@@ -5,16 +5,23 @@
 
 /* Global Variables (Const) */
 const STORAGE_KEY = 'bookDB';
+const EMPTY_VALUE = '';
 
 /* Global Variables (Generals) */
-let gBooks = [];
+let gBooks    = [];
+let gFilterBy = EMPTY_VALUE;
 
 /* Function Calls (Main) */
 _createBooks();
 
 /* Function Implementations */
 function getBooks() {
-    return gBooks;
+    if (!gFilterBy) return gBooks;
+
+    return gBooks.filter(book => {
+        return book.title.toLowerCase()
+                         .includes(gFilterBy.toLowerCase());
+    });
 }
 
 function removeBook(bookId) {
@@ -77,6 +84,10 @@ function generateImageUrl(title) {
                           .join('-');
     
     return `img/${fileName}.jpg`;
+}
+
+function setFilterBy(filterValue) {
+    gFilterBy = filterValue;
 }
 
 function _createBooks() {

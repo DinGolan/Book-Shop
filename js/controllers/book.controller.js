@@ -5,6 +5,7 @@
 
 /* Function Implementations */
 function onInit() {
+    updateClearBtnState(EMPTY_VALUE);
     renderBooks();
 }
 
@@ -38,6 +39,8 @@ function renderBooks() {
     strHTML += '</tbody>';
 
     ellTable.innerHTML = strHTML;
+    
+    lockTitleColumnWidth();
 }
 
 function onRemoveBook(bookId) {
@@ -72,4 +75,45 @@ function onShowBookDetails(bookId) {
     
     elContent.innerText = JSON.stringify(book, null, 4);
     elModal.showModal();
+}
+
+function onFilterByTitle(filterValue) {
+    setFilterBy(filterValue);
+    updateClearBtnState(filterValue);
+    renderBooks();
+}
+
+function onClearFilter() {
+    const elInput = document.querySelector('.filter-container input');
+    elInput.value = EMPTY_VALUE;
+    setFilterBy(EMPTY_VALUE);
+    updateClearBtnState(elInput.value);
+    renderBooks();
+}
+
+function updateClearBtnState(filterValue) {
+    const elClearBtn    = document.querySelector('.clear-btn');
+    elClearBtn.disabled = filterValue === EMPTY_VALUE;
+}
+
+function lockTitleColumnWidth() {
+    const elTitleCells = document.querySelectorAll('td:first-child');
+    if (!elTitleCells.length) return;
+
+    let maxWidth = 0;
+
+    elTitleCells.forEach(titleCell => {
+        const width = titleCell.offsetWidth;
+        if (width > maxWidth) maxWidth = width;
+    })
+
+    // [Debug] //
+    console.log(maxWidth);
+
+    const header = document.querySelector('th:first-child');
+    if (header) header.style.width = maxWidth + 'px';
+
+    elTitleCells.forEach(titleCell => {
+        titleCell.style.width = maxWidth + 'px';
+    });
 }
