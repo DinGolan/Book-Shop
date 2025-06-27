@@ -13,31 +13,50 @@
 
 <body onload="onInit()">
 
-    <!-- Header -->
-    <h1>Book Shop</h1>
+    <div class="main-content">
+        <!-- Header -->
+        <h1>Book Shop</h1>
 
-    <!-- Table -->
-    <section class="table-container">
-        <table></table>
-    </section>
+        <!-- Input -->
+        <div class="filter-container">
+            <input type="text" placeholder="Search by Title ..." oninput="onFilterByTitle(this.value)">
+            <button class="clear-btn" onclick="onClearFilter()">Clear</button>
+        </div>
 
-    <!-- Button -->
-    <div class="add-book-container">
-        <button class="add-book-btn" onclick="onAddBook()">Add Book</button>
+        <!-- Table -->
+        <section class="table-container">
+            <table></table>
+        </section>
+
+        <!-- Button -->
+        <div class="add-book-container">
+            <button class="add-book-btn" onclick="onAddBook()">Add Book</button>
+        </div>
+
+        <!-- Message -->
+        <div class="user-msg"></div>
+
+        <!-- Dialog -->
+        <dialog class="book-details-modal">
+            <form method="dialog">
+                <button class="btn-close" title="Close" aria-label="Close">
+                    <svg viewBox="0 0 24 24">
+                        <line x1="18" y1="6" x2="6"  y2="18"/>
+                        <line x1="6"  y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+                <pre class="book-details-content"></pre>
+            </form>
+        </dialog>
     </div>
 
-    <!-- Dialog -->
-    <dialog class="book-details-modal">
-        <form method="dialog">
-            <button class="btn-close" title="Close" aria-label="Close">
-                <svg viewBox="0 0 24 24">
-                    <line x1="18" y1="6" x2="6"  y2="18"/>
-                    <line x1="6"  y1="6" x2="18" y2="18"/>
-                </svg>
-            </button>
-            <pre class="book-details-content"></pre>
-        </form>
-    </dialog>
+    <footer class="book-stats-footer">
+        <div class="book-stats">
+            <p><span class="color-box expensive"></span>Expensive : <span class="exp-count">0</span></p>
+            <p><span class="color-box average"></span>Average : <span class="avg-count">0</span></p>
+            <p><span class="color-box cheap"></span>Cheap : <span class="cheap-count">0</span></p>    
+        </div>
+    </footer>
 
     <!-- Script -->
     <script src="js/services/storage.service.js"></script>

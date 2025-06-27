@@ -5,16 +5,23 @@
 
 /* Global Variables (Const) */
 const STORAGE_KEY = 'bookDB';
+const EMPTY_VALUE = '';
 
 /* Global Variables (Generals) */
-let gBooks = [];
+let gBooks    = [];
+let gFilterBy = EMPTY_VALUE;
 
 /* Function Calls (Main) */
 _createBooks();
 
 /* Function Implementations */
 function getBooks() {
-    return gBooks;
+    if (!gFilterBy) return gBooks;
+
+    return gBooks.filter(book => {
+        return book.title.toLowerCase()
+                         .includes(gFilterBy.toLowerCase());
+    });
 }
 
 function removeBook(bookId) {
@@ -79,6 +86,23 @@ function generateImageUrl(title) {
     return `img/${fileName}.jpg`;
 }
 
+function setFilterBy(filterValue) {
+    gFilterBy = filterValue;
+}
+
+function getBookTitle(bookId) {
+    const book      = getBookById(bookId);
+    const bookTitle = book ? book.title : 'Unkonwn';
+    return bookTitle;
+}
+
+function clearMsgTimeout() {
+    if (gMsgTimeoutId) {
+        clearTimeout(gMsgTimeoutId);
+        gMsgTimeoutId = null;
+    }   
+}
+
 function _createBooks() {
     const books = loadFromStorage(STORAGE_KEY);
 
@@ -95,7 +119,7 @@ function _createBook(title, price) {
         id: generateRandomId(),
         title,
         price,
-        imgUrl: generateImageUrl()
+        imgUrl: generateImageUrl(title)
     };
 }
 
