@@ -104,7 +104,7 @@ function onAddBook() {
     }
 
     const price = +prompt('Enter Book Price : ');
-    if (isNan(price) || !price || price < 0) {
+    if (isNaN(price) || !price || price < 0) {
         showMsg('[Error] Invalid Input. Please Enter a Valid Price.', 'error')
         return;
     }
