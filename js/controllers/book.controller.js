@@ -144,6 +144,7 @@ function onUpdateClearBtnState(filterValue) {
     elClearBtn.disabled = filterValue === EMPTY_VALUE;
 }
 
+/* [Not Used] */
 function lockTitleColumnWidth() {
     /**
      * [Notes] :
