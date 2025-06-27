@@ -98,7 +98,7 @@ function setFilterBy(filterValue) {
 
 function getBookTitle(bookId) {
     const book      = getBookById(bookId);
-    const bookTitle = book ? book.title : 'Unkonwn';
+    const bookTitle = book ? book.title : 'Unknown';
     return bookTitle;
 }
 
