@@ -22,6 +22,12 @@ function getBooks() {
         return book.title.toLowerCase()
                          .includes(gFilterBy.toLowerCase());
     });
+    if (!gFilterBy) return gBooks;
+
+    return gBooks.filter(book => {
+        return book.title.toLowerCase()
+                         .includes(gFilterBy.toLowerCase());
+    });
 }
 
 function removeBook(bookId) {
