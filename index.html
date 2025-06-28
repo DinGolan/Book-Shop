@@ -13,9 +13,15 @@
 
 <body onload="onInit()">
 
+    <!-- Main Content -->
     <div class="main-content">
+
         <!-- Header -->
         <h1>Book Shop</h1>
+
+        <div class="view-toggle-container">
+            <button onclick="onToggleDisplayMode()" class="btn-toggle-view">Toogle View</button>
+        </div>
 
         <!-- Input -->
         <div class="filter-container">
@@ -24,13 +30,11 @@
         </div>
 
         <!-- Table -->
-        <section class="table-container">
-            <table></table>
-        </section>
+        <section class="books-view-container"></section>
 
         <!-- Button -->
         <div class="add-book-container">
-            <button class="add-book-btn" onclick="onAddBook()">Add Book</button>
+            <button class="add-book-btn" onclick="onOpenModal()">Add Book</button>
         </div>
 
         <!-- Message -->
@@ -46,10 +50,31 @@
                     </svg>
                 </button>
                 <pre class="book-details-content"></pre>
+                <div class="book-rating-controls"></div>
+            </form>
+        </dialog>
+
+        <!-- Modal -->
+        <dialog class="add-book-modal">
+            <form method="dialog" onsubmit="onAddBookFromModal(event)">
+                <h2>Add New Book</h2>
+                <label>
+                    Title :
+                    <input type="text" class="book-title-input" required />
+                </label>
+                <label>
+                    Price :
+                    <input type="number" class="book-price-input" required min="0" />
+                </label>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-add" disabled>Add</button>
+                    <button type="button" class="btn-cancel" onclick="onCloseModal()">Cancel</button>
+                </div>
             </form>
         </dialog>
     </div>
 
+    <!-- Footer -->
     <footer class="book-stats-footer">
         <div class="book-stats">
             <p><span class="color-box expensive"></span>Expensive : <span class="exp-count">0</span></p>

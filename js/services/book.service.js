@@ -11,10 +11,16 @@ const EMPTY_VALUE = '';
 let gBooks    = [];
 let gFilterBy = EMPTY_VALUE;
 
+// --- //
+
 /* Function Calls (Main) */
 _createBooks();
 
+// --- //
+
 /* Function Implementations */
+
+// Book Data Utilities //
 function getBooks() {
     if (!gFilterBy) return gBooks;
 
@@ -22,46 +28,10 @@ function getBooks() {
         return book.title.toLowerCase()
                          .includes(gFilterBy.toLowerCase());
     });
-    if (!gFilterBy) return gBooks;
-
-    return gBooks.filter(book => {
-        return book.title.toLowerCase()
-                         .includes(gFilterBy.toLowerCase());
-    });
-}
-
-function removeBook(bookId) {
-    const bookIdx = gBooks.findIndex(book => book.id === bookId);
-    if (bookIdx !== -1) gBooks.splice(bookIdx, 1);
-    _saveBooks();
-}
-
-function updateBookPrice(bookId, newPrice) {
-    /* Option (1) */
-    const book = getBookById(bookId);
-    if (!book) return;
-    
-    book.price = newPrice;
-    _saveBooks();
-
-    /* Option (2) */
-    /**
-     * const bookIdx = gBooks.findIndex(book => book.id === bookId);
-     * if (bookIdx === -1) return;
-     * 
-     * gBooks[bookIdx].price = newPrice;
-     * _saveBooks();
-     **/
 }
 
 function getBookById(bookId) {
     return gBooks.find(book => book.id === bookId);
-}
-
-function addBook(title, price) {
-    const newBook = _createBook(title, price);
-    gBooks.push(newBook);
-    _saveBooks();
 }
 
 function generateRandomId() {
@@ -92,16 +62,67 @@ function generateImageUrl(title) {
     return `img/${fileName}.jpg`;
 }
 
-function setFilterBy(filterValue) {
-    gFilterBy = filterValue;
-}
-
 function getBookTitle(bookId) {
     const book      = getBookById(bookId);
     const bookTitle = book ? book.title : 'Unknown';
     return bookTitle;
 }
 
+// Remove Book //
+function removeBook(bookId) {
+    const bookIdx = gBooks.findIndex(book => book.id === bookId);
+    if (bookIdx !== -1) gBooks.splice(bookIdx, 1);
+    _saveBooks();
+}
+
+// Update Book //
+function updateBookPrice(bookId, newPrice) {
+    /* Option (1) */
+    const book = getBookById(bookId);
+    if (!book) return;
+    
+    book.price = newPrice;
+    _saveBooks();
+
+    /* Option (2) */
+    /**
+     * const bookIdx = gBooks.findIndex(book => book.id === bookId);
+     * if (bookIdx === -1) return;
+     * 
+     * gBooks[bookIdx].price = newPrice;
+     * _saveBooks();
+     **/
+}
+
+// Read Book //
+function updateBookRating(bookId, diff) {
+    const book = getBookById(bookId);
+    if (!book) return null;
+
+    if (typeof book.rating !== 'number') book.rating = 0;
+
+    const newRating = book.rating + diff;
+    if (newRating < 0 || newRating > 5)  return book;
+
+    book.rating = newRating;
+    _saveBooks();
+
+    return book;
+}
+
+// Add Book //
+function addBook(title, price) {
+    const newBook = _createBook(title, price);
+    gBooks.push(newBook);
+    _saveBooks();
+}
+
+// Filter Books //
+function setFilterBy(filterValue) {
+    gFilterBy = filterValue;
+}
+
+// Show Message //
 function clearMsgTimeout() {
     if (gMsgTimeoutId) {
         clearTimeout(gMsgTimeoutId);
@@ -109,6 +130,16 @@ function clearMsgTimeout() {
     }   
 }
 
+// Validation Functions //
+function isValidTitle(title) {
+    return typeof title === 'string' && title.trim() !== '';
+}
+
+function isValidPrice(price) {
+    return typeof price === 'number' && !isNaN(price) && price > 0;
+}
+
+// Internal Functions //
 function _createBooks() {
     const books = loadFromStorage(STORAGE_KEY);
 
@@ -125,7 +156,8 @@ function _createBook(title, price) {
         id: generateRandomId(),
         title,
         price,
-        imgUrl: generateImageUrl(title)
+        imgUrl: generateImageUrl(title),
+        rating: 0
     };
 }
 
