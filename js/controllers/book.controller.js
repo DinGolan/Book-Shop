@@ -256,8 +256,8 @@ function onCloseModal() {
     const elModal = document.querySelector('.add-book-modal');
     elModal.close();
 
-    const elBooktitleInput = document.querySelector('.book-title-input');
-    elBooktitleInput.value = '';
+    const elBookTitleInput = document.querySelector('.book-title-input');
+    elBookTitleInput.value = '';
 
     const elBookPriceInput = document.querySelector('.book-price-input');
     elBookPriceInput.value = '';
@@ -310,7 +310,7 @@ function onModalInputChange() {
     elCancelBtn.disabled = false;
 }
 
-// Toogle View //
+// Toggle View //
 function onToggleDisplayMode() {
     gDisplayMode = (gDisplayMode === 'table') ? 'grid' : 'table';
     saveToStorage('displayMode', gDisplayMode);

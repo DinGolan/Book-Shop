@@ -30,10 +30,10 @@ h1 {
     text-shadow: 1px 1px 2px #ccc;
 }
 
-/* Toogle */
+/* Toggle */
 .view-toggle-container {
-    text-align: center;
     margin-bottom: 20px;
+    text-align: center;
 }
 
 .btn-toggle-view {
@@ -144,23 +144,18 @@ td.actions button {
     font-size: 1.1em;
     font-weight: bold;
     font-style: italic;
-    /* max-width: 100%; */
-    /* padding: 20px; */
     text-align: center;
-    /* word-break: break-word; */
-    /* white-space: normal; */
 }
 
 /* Grid */
-/* Book Grid Layout */
 .book-grid {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
     gap: 24px;
+    justify-content: center;
     padding: 20px;
 }
-/* Individual Book Card */
+
 .book-card {
     align-items: center;
     background-color: #ffffff;
@@ -213,8 +208,8 @@ td.actions button {
 /* Book Card Actions */
 .book-card .actions {
     display: flex;
-    justify-content: center;
     gap: 10px;
+    justify-content: center;
     margin-top: auto;
 }
 
@@ -338,8 +333,8 @@ button:hover {
     background-color: #f2f2f2;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     cursor: pointer;
-    height: 40px;
     display: flex;
+    height: 40px;
     justify-content: center;
     position: absolute;
     right: 10px;
