@@ -102,7 +102,7 @@ function updateBookRating(bookId, diff) {
     if (typeof book.rating !== 'number') book.rating = 0;
 
     const newRating = book.rating + diff;
-    if (newRating < 0 || newRating > 5)  return book;
+    if (newRating < 0 || newRating > 5) return book;
 
     book.rating = newRating;
     _saveBooks();
