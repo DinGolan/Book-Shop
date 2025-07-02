@@ -328,6 +328,32 @@ button:hover {
     background-color: #dc3545;
 }
 
+/* Sort */
+.sort-container {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.sort-container select,
+.sort-container input[type="radio"] {
+    cursor: pointer;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.sort-container select {
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background-color: #f8f8f8;
+    padding: 6px 10px;
+}
+
+.sort-container label {
+    font-size: 1em;
+    font-weight: bold;
+    margin: 0 10px;
+}
+
 /* Modal (Show Details) */
 .book-details-modal {
     border: none;

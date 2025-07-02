@@ -24,7 +24,7 @@
             <button onclick="onToggleDisplayMode()" class="btn-toggle-view">Toggle View</button>
         </div>
 
-        <!-- Input -->
+        <!-- Filter -->
         <div class="filter-container">
             <input type="text" placeholder="Search by Title ..." oninput="onFilterBy('title', this.value)">
             <select onchange="onFilterBy('minRating', +this.value)">
@@ -36,6 +36,27 @@
                 <option value="5">⭐⭐⭐⭐⭐</option>
             </select>
             <button class="clear-btn" onclick="onClearFilter()">Clear</button>
+        </div>
+
+        <div class="sort-container">
+            <label>Sort By : 
+                <select onchange="onSetSortByField(this.value)">
+                    <option value="" disabled selected hidden>Select (Sort)</option>
+                    <option value="title">Title</option>
+                    <option value="price">Price</option>
+                    <option value="rating">Rating</option>
+                </select>
+            </label>
+
+            <label>
+                <input type="radio" name="sort-dir" value="1" onchange="onSetSortDirection(1)" checked>
+                Ascending
+            </label>
+
+            <label>
+                <input type="radio" name="sort-dir" value="-1" onchange="onSetSortDirection(-1)">
+                Descending
+            </label>
         </div>
 
         <!-- Table -->

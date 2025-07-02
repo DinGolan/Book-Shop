@@ -9,11 +9,9 @@ const EMPTY_STRING = '';
 const IS_DEV_MODE  = false;
 
 /* Global Variables (Generals) */
-let gBooks    = [];
-let gFilterBy = {
-    title: '',
-    minRating: 0
-};
+var gBooks    = [];
+var gFilterBy = { title: '', minRating: 0 };
+var gSortBy   = { field: '', direction: 1 };
 
 // --- //
 
@@ -30,12 +28,22 @@ _createBooks();
 
 // Book Data Utilities //
 function getBooks() {
-    if (!gFilterBy) return gBooks;
-
-    return gBooks.filter(book => {
+    let books = gBooks.filter(book => {
         return book.title.toLowerCase().includes(gFilterBy.title.toLowerCase()) &&
                book.rating >= gFilterBy.minRating
     });
+
+    if (gSortBy.field) {
+        books.sort((book_1, book_2) => {
+            if (gSortBy.field === 'title') {
+                return book_1.title.localeCompare(book_2.title) * gSortBy.direction;
+            } else {
+                return (book_1[gSortBy.field] - book_2[gSortBy.field]) * gSortBy.direction;
+            }
+        });
+    }
+
+    return books;
 }
 
 function getBookById(bookId) {
@@ -115,6 +123,15 @@ function isValidTitle(title) {
 
 function isValidPrice(price) {
     return typeof price === 'number' && !isNaN(price) && price > 0;
+}
+
+// Sort Functions //
+function setSortByField(field) {
+    gSortBy.field = field;
+}
+
+function setSortDirection(direction) {
+    gSortBy.direction = direction;
 }
 
 // Internal Functions //

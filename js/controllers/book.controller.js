@@ -7,7 +7,7 @@
 const MILLI_SECONDS = 2000;
 
 /* Global Variables (Time) */
-let gMsgTimeoutId = null;
+var gMsgTimeoutId = null;
 
 /* Global Variables (Generals) */
 var gCurrReadBookId = null;
@@ -341,19 +341,31 @@ function renderStars(rating) {
 
 // Query Params //
 function readQueryParams() {
+    // [TODO] //
+    /**
+     * >>> Change the name of variables.
+     **/
     const queryParams = new URLSearchParams(window.location.search);
     
     const title     =  queryParams.get('title')     || EMPTY_STRING;
-    const minRating = +queryParams.get('minRating') || 0 
+    const minRating = +queryParams.get('minRating') || 0;
+    const field     = queryParams.get('field') || '';
+    const direction = +queryParams.get('direction') || 1;
 
     setFilterBy('title', title);
     setFilterBy('minRating', minRating);
+    setSortByField(field);
+    setSortDirection(direction);
 
-    const elInput  = document.querySelector('.filter-container input');
-    const elSelect = document.querySelector('.filter-container select');
-
-    elInput.value  = title;
-    elSelect.value = minRating;
+    const elInput      = document.querySelector('.filter-container input');
+    const elSelect     = document.querySelector('.filter-container select');
+    const elSortInput  = document.querySelector(`.sort-container input[value="${direction}"]`);
+    const elSortSelect = document.querySelector('.sort-container select');
+    
+    elInput.value       = title;
+    elSelect.value      = minRating;
+    elSortInput.checked = true;
+    elSortSelect.value  = field;
 }
 
 function setQueryParams() {
@@ -367,11 +379,27 @@ function setQueryParams() {
         queryParams.set('minRating', gFilterBy.minRating);
     }
 
+    if (gSortBy.field) {
+        queryParams.set('field', gSortBy.field);
+        queryParams.set('direction', gSortBy.direction);
+    }
+
     const newUrl = window.location.protocol + '//' +
                    window.location.host     +
                    window.location.pathname + '?' + queryParams.toString();
     
     window.history.pushState({ path: newUrl }, '', newUrl);
+}
+
+// Sort Books //
+function onSetSortByField(field) {
+    setSortByField(field);
+    renderBooks();
+}
+
+function onSetSortDirection(direction) {
+    setSortDirection(direction);
+    renderBooks();
 }
 
 /*********************************************************/
