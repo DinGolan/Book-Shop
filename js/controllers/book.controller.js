@@ -20,6 +20,7 @@ var gDisplayMode    = null;
 // Initializes App //
 function onInit() {
     setDefaultDisplayMode();
+    readQueryParams();
     clearMsgTimeout();
     onUpdateClearBtnState();
     renderBooks();
@@ -201,6 +202,7 @@ function onChangeRating(diff) {
 function onFilterBy(filterProperty, filterValue) {
     setFilterBy(filterProperty, filterValue);
     onUpdateClearBtnState();
+    setQueryParams();
     renderBooks();
 }
 
@@ -208,13 +210,14 @@ function onClearFilter() {
     const elInput  = document.querySelector('.filter-container input');
     const elSelect = document.querySelector('.filter-container select');
 
-    elInput.value          = EMPTY_VALUE;
+    elInput.value          = EMPTY_STRING;
     elSelect.selectedIndex = 0;
 
-    setFilterBy('title', EMPTY_VALUE);
+    setFilterBy('title', EMPTY_STRING);
     setFilterBy('minRating', 0);
 
     onUpdateClearBtnState();
+    setQueryParams();
     renderBooks();
 }
 
@@ -334,6 +337,41 @@ function renderStars(rating) {
     const fullStars  = '★'.repeat(rating);
     const emptyStars = '☆'.repeat(5 - rating);
     return fullStars + emptyStars;
+}
+
+// Query Params //
+function readQueryParams() {
+    const queryParams = new URLSearchParams(window.location.search);
+    
+    const title     =  queryParams.get('title')     || EMPTY_STRING;
+    const minRating = +queryParams.get('minRating') || 0 
+
+    setFilterBy('title', title);
+    setFilterBy('minRating', minRating);
+
+    const elInput  = document.querySelector('.filter-container input');
+    const elSelect = document.querySelector('.filter-container select');
+
+    elInput.value  = title;
+    elSelect.value = minRating;
+}
+
+function setQueryParams() {
+    const queryParams = new URLSearchParams();
+
+    if (gFilterBy.title) {
+        queryParams.set('title', gFilterBy.title);
+    }
+
+    if (gFilterBy.minRating) {
+        queryParams.set('minRating', gFilterBy.minRating);
+    }
+
+    const newUrl = window.location.protocol + '//' +
+                   window.location.host     +
+                   window.location.pathname + '?' + queryParams.toString();
+    
+    window.history.pushState({ path: newUrl }, '', newUrl);
 }
 
 /*********************************************************/

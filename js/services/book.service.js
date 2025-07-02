@@ -4,9 +4,9 @@
 'use strict';
 
 /* Global Variables (Const) */
-const STORAGE_KEY = 'bookDB';
-const EMPTY_VALUE = '';
-const IS_DEV_MODE   = false;
+const STORAGE_KEY  = 'bookDB';
+const EMPTY_STRING = '';
+const IS_DEV_MODE  = false;
 
 /* Global Variables (Generals) */
 let gBooks    = [];
