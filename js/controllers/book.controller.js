@@ -21,7 +21,7 @@ var gDisplayMode    = null;
 function onInit() {
     setDefaultDisplayMode();
     clearMsgTimeout();
-    onUpdateClearBtnState(EMPTY_VALUE);
+    onUpdateClearBtnState();
     renderBooks();
 }
 
@@ -198,23 +198,31 @@ function onChangeRating(diff) {
 }
 
 // Filter Books //
-function onFilterByTitle(filterValue) {
-    setFilterBy(filterValue);
-    onUpdateClearBtnState(filterValue);
+function onFilterBy(filterProperty, filterValue) {
+    setFilterBy(filterProperty, filterValue);
+    onUpdateClearBtnState();
     renderBooks();
 }
 
 function onClearFilter() {
-    const elInput = document.querySelector('.filter-container input');
-    elInput.value = EMPTY_VALUE;
-    setFilterBy(EMPTY_VALUE);
-    onUpdateClearBtnState(elInput.value);
+    const elInput  = document.querySelector('.filter-container input');
+    const elSelect = document.querySelector('.filter-container select');
+
+    elInput.value          = EMPTY_VALUE;
+    elSelect.selectedIndex = 0;
+
+    setFilterBy('title', EMPTY_VALUE);
+    setFilterBy('minRating', 0);
+
+    onUpdateClearBtnState();
     renderBooks();
 }
 
-function onUpdateClearBtnState(filterValue) {
-    const elClearBtn    = document.querySelector('.clear-btn');
-    elClearBtn.disabled = filterValue === EMPTY_VALUE;
+function onUpdateClearBtnState() {
+    const elClearBtn   = document.querySelector('.clear-btn');
+    const shouldEnable = gFilterBy.title || gFilterBy.minRating > 0;
+    
+    elClearBtn.disabled = !shouldEnable;
 }
 
 // Show Message //

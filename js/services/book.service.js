@@ -10,7 +10,10 @@ const IS_DEV_MODE   = false;
 
 /* Global Variables (Generals) */
 let gBooks    = [];
-let gFilterBy = EMPTY_VALUE;
+let gFilterBy = {
+    title: '',
+    minRating: 0
+};
 
 // --- //
 
@@ -30,8 +33,8 @@ function getBooks() {
     if (!gFilterBy) return gBooks;
 
     return gBooks.filter(book => {
-        return book.title.toLowerCase()
-                         .includes(gFilterBy.toLowerCase());
+        return book.title.toLowerCase().includes(gFilterBy.title.toLowerCase()) &&
+               book.rating >= gFilterBy.minRating
     });
 }
 
@@ -93,8 +96,8 @@ function addBook(title, price) {
 }
 
 // Filter Books //
-function setFilterBy(filterValue) {
-    gFilterBy = filterValue;
+function setFilterBy(filterProperty, filterValue) {
+    gFilterBy[filterProperty] = filterValue;
 }
 
 // Show Message //

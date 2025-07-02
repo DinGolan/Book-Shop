@@ -26,7 +26,15 @@
 
         <!-- Input -->
         <div class="filter-container">
-            <input type="text" placeholder="Search by Title ..." oninput="onFilterByTitle(this.value)">
+            <input type="text" placeholder="Search by Title ..." oninput="onFilterBy('title', this.value)">
+            <select onchange="onFilterBy('minRating', +this.value)">
+                <option value="" disabled selected hidden>Min Rating</option>
+                <option value="1">⭐</option>
+                <option value="2">⭐⭐</option>
+                <option value="3">⭐⭐⭐</option>
+                <option value="4">⭐⭐⭐⭐</option>
+                <option value="5">⭐⭐⭐⭐⭐</option>
+            </select>
             <button class="clear-btn" onclick="onClearFilter()">Clear</button>
         </div>
 
