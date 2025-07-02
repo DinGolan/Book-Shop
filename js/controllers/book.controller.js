@@ -1,6 +1,6 @@
-/*********************************/
-/* Exercise - Book Shop (Part 1) */
-/*********************************/
+/*************************************/
+/* Exercise - Book Shop (Part 1 + 2) */
+/*************************************/
 'use strict';
 
 /* Global Variables (Const) */
@@ -48,12 +48,14 @@ function renderBooksTable(books) {
             <colgroup>
                 <col style="width: 50%">
                 <col style="width: 15%">
+                <col style="width: 25%">
                 <col style="width: 55%">
             </colgroup>
             <thead>
                 <tr>
                     <th>Title</th>
                     <th>Price</th>
+                    <th>Rating</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -63,7 +65,7 @@ function renderBooksTable(books) {
     if (!books.length) {
         strHTML += `
             <tr>
-                <td colspan="3" class="no-books-msg">
+                <td colspan="4" class="no-books-msg">
                     No Matching Books Were Found ...
                 </td>
             </tr>
@@ -73,6 +75,7 @@ function renderBooksTable(books) {
             <tr>
                 <td>${book.title}</td>
                 <td>${book.price}</td>
+                <td class="book-rating-stars">${renderStars(book.rating)}</td>
                 <td class="actions">
                     <button class="btn-read" onclick="onShowBookDetails('${book.id}')">Read</button>
                     <button class="btn-update" onclick="onUpdateBook('${book.id}')">Update</button>
@@ -106,6 +109,7 @@ function renderBookCard(book) {
         <div class="book-card">
             <h3>${book.title}</h3>
             <p>Price : ${book.price}</p>
+            <p class="book-rating-stars">${renderStars(book.rating)}</p>
             <div class="actions">
                 <button class="btn-read" onclick="onShowBookDetails('${book.id}')">Read</button>
                 <button class="btn-update" onclick="onUpdateBook('${book.id}')">Update</button>
@@ -315,6 +319,13 @@ function onToggleDisplayMode() {
     gDisplayMode = (gDisplayMode === 'table') ? 'grid' : 'table';
     saveToStorage('displayMode', gDisplayMode);
     renderBooks();
+}
+
+// Book Rating //
+function renderStars(rating) {
+    const fullStars  = '★'.repeat(rating);
+    const emptyStars = '☆'.repeat(5 - rating);
+    return fullStars + emptyStars;
 }
 
 /*********************************************************/

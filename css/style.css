@@ -1,6 +1,6 @@
-/*********************************/
-/* Exercise - Book Shop (Part 1) */
-/*********************************/
+/*************************************/
+/* Exercise - Book Shop (Part 1 + 2) */
+/*************************************/
 
 /* Body */
 html {
@@ -147,6 +147,13 @@ td.actions button {
     text-align: center;
 }
 
+table .book-rating-stars {
+    color: gold;
+    font-size: 1.2em;
+    margin: 0.5em 0;
+    text-align: center;
+}
+
 /* Grid */
 .book-grid {
     display: flex;
@@ -179,14 +186,14 @@ td.actions button {
     color: #333;
     font-size: 1.2em;
     font-weight: bold;
-    margin-bottom: 12px;
+    margin: 0.3em 0;
     text-align: center;
 }
 
 .book-card p {
     color: #666;
     font-size: 1em;
-    margin: 0 0 16px;
+    margin: 0.3em 0;
     text-align: center;
 }
 
@@ -205,6 +212,13 @@ td.actions button {
     width: 100%;
 }
 
+.book-card .book-rating-stars {
+    color: gold;
+    font-size: 1.2em;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
 /* Book Card Actions */
 .book-card .actions {
     display: flex;
@@ -218,7 +232,6 @@ td.actions button {
     font-size: 0.9em;
     padding: 6px 10px;
 }
-
 
 /* Buttons */
 button {

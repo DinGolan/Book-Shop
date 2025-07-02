@@ -25,7 +25,7 @@ function loadFromStorage(key) {
     if (Array.isArray(jsonData)) {
         jsonData.forEach(book => {
             if (book.rating === undefined || book.rating === null) {
-                book.rating = 0;
+                book.rating = getRandomRating();
             }
         });
     }

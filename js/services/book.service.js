@@ -1,11 +1,12 @@
-/*********************************/
-/* Exercise - Book Shop (Part 1) */
-/*********************************/
+/*************************************/
+/* Exercise - Book Shop (Part 1 + 2) */
+/*************************************/
 'use strict';
 
 /* Global Variables (Const) */
 const STORAGE_KEY = 'bookDB';
 const EMPTY_VALUE = '';
+const IS_DEV_MODE   = false;
 
 /* Global Variables (Generals) */
 let gBooks    = [];
@@ -14,6 +15,10 @@ let gFilterBy = EMPTY_VALUE;
 // --- //
 
 /* Function Calls (Main) */
+if (IS_DEV_MODE) {
+    localStorage.removeItem(STORAGE_KEY);
+}
+
 _createBooks();
 
 // --- //
@@ -32,34 +37,6 @@ function getBooks() {
 
 function getBookById(bookId) {
     return gBooks.find(book => book.id === bookId);
-}
-
-function generateRandomId() {
-    const SIZE = 5;
-
-    const digits       = '0123456789';
-    const upperLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const lowerLetters = 'abcdefghijklmnopqrstuvwxyz';
-    const chars        = upperLetters + lowerLetters + digits;
-    
-    let newId   = '';
-    let randIdx = null;
-    for (let i = 0; i < SIZE; i++) {
-        randIdx = Math.floor(Math.random() * chars.length);
-        newId  += chars.charAt(randIdx);
-    }
-
-    return newId;
-}
-
-function generateImageUrl(title) {
-    if (!title) return 'img/default.jpg' 
-
-    const fileName = title.toLowerCase()
-                          .split(' ')
-                          .join('-');
-    
-    return `img/${fileName}.jpg`;
 }
 
 function getBookTitle(bookId) {
@@ -98,8 +75,6 @@ function updateBookPrice(bookId, newPrice) {
 function updateBookRating(bookId, diff) {
     const book = getBookById(bookId);
     if (!book) return null;
-
-    if (typeof book.rating !== 'number') book.rating = 0;
 
     const newRating = book.rating + diff;
     if (newRating < 0 || newRating > 5) return book;
@@ -157,7 +132,7 @@ function _createBook(title, price) {
         title,
         price,
         imgUrl: generateImageUrl(title),
-        rating: 0
+        rating: getRandomRating()
     };
 }
 
