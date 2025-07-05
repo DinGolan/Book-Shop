@@ -27,8 +27,8 @@
         <!-- Filter -->
         <div class="filter-container">
             <input type="text" placeholder="Search by Title ..." oninput="onFilterBy('title', this.value)">
-            <select onchange="onFilterBy('minRating', +this.value)">
-                <option value="0" disabled selected hidden>Min Rating</option>
+            <select onchange="onFilterBy('rating', +this.value)">
+                <option value="0" disabled selected hidden>Rating</option>
                 <option value="1">⭐</option>
                 <option value="2">⭐⭐</option>
                 <option value="3">⭐⭐⭐</option>
@@ -85,8 +85,8 @@
         </dialog>
 
         <!-- Modal -->
-        <dialog class="add-book-modal">
-            <form method="dialog" onsubmit="onAddBookFromModal(event)">
+        <dialog class="add-update-book-modal">
+            <form method="dialog" onsubmit="onSubmitBookForm(event)">
                 <h2>Add New Book</h2>
                 <label>
                     Title :
@@ -102,6 +102,12 @@
                 </div>
             </form>
         </dialog>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-controls">
+        <button class="btn-prev" onclick="onChangePage(-1)">Prev</button>
+        <button class="btn-next" onclick="onChangePage(1)">Next</button>
     </div>
 
     <!-- Footer -->

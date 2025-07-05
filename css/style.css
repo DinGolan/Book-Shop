@@ -279,7 +279,8 @@ button:hover {
 }
 
 .add-book-container {
-    margin: 30px 0;
+    margin-top: 30px;
+    margin-bottom: 10px;
     text-align: center;
 }
 
@@ -459,7 +460,7 @@ button:hover {
 }
 
 /* Modal (Add Book) */
-.add-book-modal {
+.add-update-book-modal {
     border: none;
     border-radius: 10px;
     font-family: inherit;
@@ -468,16 +469,16 @@ button:hover {
     width: 90%;
 }
 
-.add-book-modal h2 {
+.add-update-book-modal h2 {
     margin-bottom: 20px;
     text-align: center;
 }
 
-.add-book-modal::backdrop {
+.add-update-book-modal::backdrop {
     background-color: rgba(0, 0, 0, 0.4);
 }
 
-.add-book-modal label {
+.add-update-book-modal label {
     display: block;
     font-weight: bold;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -485,7 +486,7 @@ button:hover {
     margin-bottom: 12px;
 }
 
-.add-book-modal input {
+.add-update-book-modal input {
     box-sizing: border-box;
     margin-top: 4px;
     padding: 6px;
@@ -526,6 +527,33 @@ button:hover {
 
 .btn-cancel:disabled {
     background-color: #f5b7b1;
+    cursor: not-allowed;
+}
+
+/* Pagination */
+.pagination-controls {
+    margin-top: 20px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.pagination-controls button {
+    border-radius: 6px;
+    background-color: #6c63ff;
+    color: white;
+    font-weight: bold;
+    padding: 8px 16px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.pagination-controls button:hover {
+    background-color: #4b45c2;
+    transform: scale(1.05);
+}
+
+.pagination-controls .disabled {
+    opacity: 0.5;
+    /* pointer-events: none; */
     cursor: not-allowed;
 }
 

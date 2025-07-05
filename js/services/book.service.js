@@ -7,11 +7,27 @@
 const STORAGE_KEY  = 'bookDB';
 const EMPTY_STRING = '';
 const IS_DEV_MODE  = false;
+const PAGE_SIZE    = 5;
 
 /* Global Variables (Generals) */
-var gBooks    = [];
-var gFilterBy = { title: '', minRating: 0 };
-var gSortBy   = { field: '', direction: 1 };
+var gBooks        = [];
+var gQueryOptions = {
+    page: {
+        idx: 0
+    },
+
+    filterBy: {
+        title: '',
+        rating: 0
+    },
+
+    sortBy: {
+        field: '',
+        direction: 1
+    }
+};
+var gFilterBy = gQueryOptions.filterBy;
+var gSortBy   = gQueryOptions.sortBy;
 
 // --- //
 
@@ -30,7 +46,7 @@ _createBooks();
 function getBooks() {
     let books = gBooks.filter(book => {
         return book.title.toLowerCase().includes(gFilterBy.title.toLowerCase()) &&
-               book.rating >= gFilterBy.minRating
+               book.rating >= gFilterBy.rating;
     });
 
     if (gSortBy.field) {
@@ -42,6 +58,9 @@ function getBooks() {
             }
         });
     }
+
+    const startIdx = gQueryOptions.page.idx * PAGE_SIZE;
+    books          = books.slice(startIdx, startIdx + PAGE_SIZE);
 
     return books;
 }
@@ -64,22 +83,17 @@ function removeBook(bookId) {
 }
 
 // Update Book //
-function updateBookPrice(bookId, newPrice) {
-    /* Option (1) */
+function updateBook(bookId, newTitle, newPrice) {
     const book = getBookById(bookId);
-    if (!book) return;
-    
-    book.price = newPrice;
-    _saveBooks();
+    if (!book) return null;
 
-    /* Option (2) */
-    /**
-     * const bookIdx = gBooks.findIndex(book => book.id === bookId);
-     * if (bookIdx === -1) return;
-     * 
-     * gBooks[bookIdx].price = newPrice;
-     * _saveBooks();
-     **/
+    if (book.title === newTitle && book.price === newPrice) return book;
+
+    book.title = newTitle;
+    book.price = newPrice;
+
+    _saveBooks();
+    return book;
 }
 
 // Read Book //
@@ -134,6 +148,14 @@ function setSortDirection(direction) {
     gSortBy.direction = direction;
 }
 
+// Pagination //
+function getTotalBooksCount() {
+    return gBooks.filter(book => {
+        return book.title.toLowerCase().includes(gFilterBy.title.toLowerCase()) &&
+               book.rating >= gFilterBy.rating;
+    }).length;
+}
+
 // Internal Functions //
 function _createBooks() {
     const books = loadFromStorage(STORAGE_KEY);
@@ -159,11 +181,44 @@ function _createBook(title, price) {
 function _generateDefaultBooks() {
     return [
         _createBook('The Adventures of Lori Ipsi', 120),
-        _createBook('World Atlas', 300),
-        _createBook('Zorba the Greek', 87)
+        _createBook('World Atlas'                , 300),
+        _createBook('Zorba the Greek'            ,  87),
+        _createBook('To Kill a Mockingbird'      ,  95),
+        _createBook('Sorcerers Stone'            , 110),
+        _createBook('The Great Gatsby'           , 150),
+        _createBook('Pride and Prejudice'        ,  80),
+        _createBook('The Hobbit'                 , 130),
+        _createBook('Harry Potter'               , 200),
+        _createBook('Fahrenheit 451'             , 140),
+        _createBook('The Catcher in the Rye'     , 105),
+        _createBook('The Little Prince'          ,  65),
+        _createBook('History of Humankind'       , 185),
+        _createBook('Brave New World'            , 145),
+        _createBook('The Alchemist'              , 115)
     ];
 }
 
 function _saveBooks() {
     saveToStorage(STORAGE_KEY, gBooks);
+}
+
+/*********************************************************/
+
+/* Not Used */
+function updateBookPrice(bookId, newPrice) {
+    /* Option (1) */
+    const book = getBookById(bookId);
+    if (!book) return;
+    
+    book.price = newPrice;
+    _saveBooks();
+
+    /* Option (2) */
+    /**
+     * const bookIdx = gBooks.findIndex(book => book.id === bookId);
+     * if (bookIdx === -1) return;
+     * 
+     * gBooks[bookIdx].price = newPrice;
+     * _saveBooks();
+     **/
 }

@@ -12,6 +12,7 @@ var gMsgTimeoutId = null;
 /* Global Variables (Generals) */
 var gCurrReadBookId = null;
 var gDisplayMode    = null;
+var gEditedBookId   = null;
 
 // --- //
 
@@ -39,6 +40,7 @@ function renderBooks() {
         elContainer.innerHTML = gridHTML; 
     }
 
+    onUpdatePaginationButtons();
     onUpdateBooksStats();
 }
 
@@ -79,7 +81,7 @@ function renderBooksTable(books) {
                 <td class="book-rating-stars">${renderStars(book.rating)}</td>
                 <td class="actions">
                     <button class="btn-read" onclick="onShowBookDetails('${book.id}')">Read</button>
-                    <button class="btn-update" onclick="onUpdateBook('${book.id}')">Update</button>
+                    <button class="btn-update" onclick="onOpenModal('${book.id}')">Update</button>
                     <button class="btn-delete" onclick="onRemoveBook('${book.id}')">Delete</button>
                 </td>
             </tr>
@@ -113,7 +115,7 @@ function renderBookCard(book) {
             <p class="book-rating-stars">${renderStars(book.rating)}</p>
             <div class="actions">
                 <button class="btn-read" onclick="onShowBookDetails('${book.id}')">Read</button>
-                <button class="btn-update" onclick="onUpdateBook('${book.id}')">Update</button>
+                <button class="btn-update" onclick="onOpenModal('${book.id}')">Update</button>
                 <button class="btn-delete" onclick="onRemoveBook('${book.id}')">Delete</button>
             </div>
         </div>
@@ -128,29 +130,6 @@ function onRemoveBook(bookId) {
     renderBooks();
 
     showMsg(`[Success] Book ["${bookTitle}"] - Removed Successfully.`, 'success');
-}
-
-// Update Book //
-function onUpdateBook(bookId) {
-    const book         = getBookById(bookId);
-    const currentPrice = book.price;
-
-    const newPrice = +prompt('Enter a New Price : ');
-    if (!(isValidPrice(newPrice))) {
-        showMsg('[Error] Invalid Input. Please Enter a Valid Price.', 'error')   
-        return;
-    }
-
-    if (newPrice === currentPrice) {
-        showMsg(`[Warning] The price is already set to ${newPrice} - Nothing to Update.`, 'warn');
-        return;
-    }
-
-    updateBookPrice(bookId, newPrice);
-    renderBooks();
-
-    const bookTitle = getBookTitle(bookId);
-    showMsg(`[Success] Book ["${bookTitle}"] - Updated Successfully.`, 'success');
 }
 
 // Show Book Details //
@@ -207,14 +186,14 @@ function onFilterBy(filterProperty, filterValue) {
 }
 
 function onClearFilter() {
-    const elInput  = document.querySelector('.filter-container input');
-    const elSelect = document.querySelector('.filter-container select');
+    const elFilterInput  = document.querySelector('.filter-container input');
+    const elFilterSelect = document.querySelector('.filter-container select');
 
-    elInput.value          = EMPTY_STRING;
-    elSelect.selectedIndex = 0;
+    elFilterInput.value          = EMPTY_STRING;
+    elFilterSelect.selectedIndex = 0;
 
     setFilterBy('title', EMPTY_STRING);
-    setFilterBy('minRating', 0);
+    setFilterBy('rating', 0);
 
     onUpdateClearBtnState();
     setQueryParams();
@@ -223,7 +202,7 @@ function onClearFilter() {
 
 function onUpdateClearBtnState() {
     const elClearBtn   = document.querySelector('.clear-btn');
-    const shouldEnable = gFilterBy.title || gFilterBy.minRating > 0;
+    const shouldEnable = gFilterBy.title || gFilterBy.rating > 0;
     
     elClearBtn.disabled = !shouldEnable;
 }
@@ -262,13 +241,35 @@ function onUpdateBooksStats() {
 }
 
 // Modal (Add Book) //
-function onOpenModal() {
-    const elModal = document.querySelector('.add-book-modal');
+function onOpenModal(bookId = null) {
+    const elModal = document.querySelector('.add-update-book-modal');
+
+    const elModalTitle = elModal.querySelector('h2');
+    elModalTitle.innerText = (bookId) ? 'Update Book' : 'Add New Book';
+
+    const elBookTitleInput = document.querySelector('.book-title-input');
+    const elBookPriceInput = document.querySelector('.book-price-input');
+    const elAddBtn         = document.querySelector('.btn-add');
+
+    gEditedBookId = bookId;
+
+    if (bookId) {
+        const book = getBookById(bookId);
+        elBookTitleInput.value = book.title;
+        elBookPriceInput.value = book.price;
+        elAddBtn.innerText     = 'Save Changes';
+    } else {
+        elBookTitleInput.value = '';
+        elBookPriceInput.value = '';
+        elAddBtn.innerText     = 'Add';
+    }
+
+    elAddBtn.disabled = true;
     elModal.showModal();
 }
 
 function onCloseModal() {
-    const elModal = document.querySelector('.add-book-modal');
+    const elModal = document.querySelector('.add-update-book-modal');
     elModal.close();
 
     const elBookTitleInput = document.querySelector('.book-title-input');
@@ -281,7 +282,7 @@ function onCloseModal() {
     elAddBtn.disabled = true;
 }
 
-function onAddBookFromModal(event) {
+function onSubmitBookForm(event) {
     event.preventDefault();
 
     const elBookTitleInput = document.querySelector('.book-title-input');
@@ -298,15 +299,20 @@ function onAddBookFromModal(event) {
         return;
     }
 
-    addBook(title, price);
+    if (gEditedBookId) {
+        updateBook(gEditedBookId, title, price);
+        showMsg(`[Success] Book updated successfully.`, 'success');
+    } else {
+        addBook(title, price);
+        showMsg(`[Success] Book added successfully.`, 'success');
+    }
     
     renderBooks();
-
     onCloseModal();
 }
 
 // Modal (Add Book) (Listener) //
-const elBookModalInputs = document.querySelectorAll('.add-book-modal input');
+const elBookModalInputs = document.querySelectorAll('.add-update-book-modal input');
 elBookModalInputs.forEach(input => {
     input.addEventListener('input', onModalInputChange);
 });
@@ -341,31 +347,29 @@ function renderStars(rating) {
 
 // Query Params //
 function readQueryParams() {
-    // [TODO] //
-    /**
-     * >>> Change the name of variables.
-     **/
     const queryParams = new URLSearchParams(window.location.search);
     
     const title     =  queryParams.get('title')     || EMPTY_STRING;
-    const minRating = +queryParams.get('minRating') || 0;
-    const field     = queryParams.get('field') || '';
+    const rating    = +queryParams.get('rating')    || 0;
+    const field     = queryParams.get('field')      || '';
     const direction = +queryParams.get('direction') || 1;
+    const pageIdx   = +queryParams.get('pageIdx')   || 0;
 
     setFilterBy('title', title);
-    setFilterBy('minRating', minRating);
+    setFilterBy('rating', rating);
     setSortByField(field);
     setSortDirection(direction);
+    gQueryOptions.page.idx = pageIdx;
 
-    const elInput      = document.querySelector('.filter-container input');
-    const elSelect     = document.querySelector('.filter-container select');
-    const elSortInput  = document.querySelector(`.sort-container input[value="${direction}"]`);
-    const elSortSelect = document.querySelector('.sort-container select');
+    const elFilterInput  = document.querySelector('.filter-container input');
+    const elFilterSelect = document.querySelector('.filter-container select');
+    const elSortInput    = document.querySelector(`.sort-container input[value="${direction}"]`);
+    const elSortSelect   = document.querySelector('.sort-container select');
     
-    elInput.value       = title;
-    elSelect.value      = minRating;
-    elSortInput.checked = true;
-    elSortSelect.value  = field;
+    elFilterInput.value  = title;
+    elFilterSelect.value = rating;
+    elSortInput.checked  = true;
+    elSortSelect.value   = field;
 }
 
 function setQueryParams() {
@@ -375,14 +379,16 @@ function setQueryParams() {
         queryParams.set('title', gFilterBy.title);
     }
 
-    if (gFilterBy.minRating) {
-        queryParams.set('minRating', gFilterBy.minRating);
+    if (gFilterBy.rating) {
+        queryParams.set('rating', gFilterBy.rating);
     }
 
     if (gSortBy.field) {
         queryParams.set('field', gSortBy.field);
         queryParams.set('direction', gSortBy.direction);
     }
+
+    queryParams.set('pageIdx', gQueryOptions.page.idx);
 
     const newUrl = window.location.protocol + '//' +
                    window.location.host     +
@@ -399,7 +405,42 @@ function onSetSortByField(field) {
 
 function onSetSortDirection(direction) {
     setSortDirection(direction);
+
+    if (!gSortBy.field) {
+        const elSortSelect         = document.querySelector('.sort-container select');
+        elSortSelect.selectedIndex = 0;
+    }
+
     renderBooks();
+}
+
+// Pagination //
+function onChangePage(diff) {
+    const totalBooks = getTotalBooksCount();
+    const totalPages = Math.ceil(totalBooks / PAGE_SIZE);
+
+    gQueryOptions.page.idx += diff;
+
+    if (gQueryOptions.page.idx >= totalPages) gQueryOptions.page.idx = 0;
+    if (gQueryOptions.page.idx < 0)           gQueryOptions.page.idx = totalPages - 1;
+
+    setQueryParams();
+    renderBooks();
+}
+
+function onUpdatePaginationButtons() {
+    const totalBooks = getTotalBooksCount();
+    const totalPages = Math.ceil(totalBooks / PAGE_SIZE);
+
+    const elPrevBtn     = document.querySelector('.btn-prev');
+    const elNextBtn     = document.querySelector('.btn-next');
+    const shouldDisable = totalPages <= 1;
+
+    elPrevBtn.disabled  = shouldDisable;
+    elNextBtn.disabled  = shouldDisable;
+
+    elPrevBtn.classList.toggle('disabled', shouldDisable);
+    elNextBtn.classList.toggle('disabled', shouldDisable);
 }
 
 /*********************************************************/
@@ -454,4 +495,27 @@ function lockTitleColumnWidth() {
     elTitleCells.forEach(titleCell => {
         titleCell.style.width = maxWidth + 'px';
     });
+}
+
+/* Not Used */
+function onUpdateBook(bookId) {
+    const book         = getBookById(bookId);
+    const currentPrice = book.price;
+
+    const newPrice = +prompt('Enter a New Price : ');
+    if (!(isValidPrice(newPrice))) {
+        showMsg('[Error] Invalid Input. Please Enter a Valid Price.', 'error')   
+        return;
+    }
+
+    if (newPrice === currentPrice) {
+        showMsg(`[Warning] The price is already set to ${newPrice} - Nothing to Update.`, 'warn');
+        return;
+    }
+
+    updateBookPrice(bookId, newPrice);
+    renderBooks();
+
+    const bookTitle = getBookTitle(bookId);
+    showMsg(`[Success] Book ["${bookTitle}"] - Updated Successfully.`, 'success');
 }
