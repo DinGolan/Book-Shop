@@ -1,3 +1,12 @@
+<!-- Commit -->
+<!-- 
+Description :
+- Add book-markability to the sort & pagination state so that the app can be loaded with the book list sorted and in the specific page which was bookmarked.
+- Add book-markability to the book details modal state so that the app can be loaded with the full details on a specific book displayed.
+- Add a button to the book details modal which will navigate to the book edit modal of the same book.
+- Support more advanced pagination which allows navigating directly to a page by its number and shows which page is currently displayed.
+-->
+
 <!--------------------------------------->
 <!-- Exercise - Book Shop (Part 1 + 2) -->
 <!--------------------------------------->
@@ -35,9 +44,10 @@
                 <option value="4">⭐⭐⭐⭐</option>
                 <option value="5">⭐⭐⭐⭐⭐</option>
             </select>
-            <button class="clear-btn" onclick="onClearFilter()">Clear</button>
+            <button class="btn-clear" onclick="onClearFilter()">Clear</button>
         </div>
 
+        <!-- Sort -->
         <div class="sort-container">
             <label>Sort By : 
                 <select onchange="onSetSortByField(this.value)">
@@ -63,6 +73,7 @@
         <section class="books-view-container"></section>
 
         <!-- Button -->
+        <!-- [TODO][Check if need this section] -->
         <div class="add-book-container">
             <button class="add-book-btn" onclick="onOpenModal()">Add Book</button>
         </div>
@@ -70,8 +81,8 @@
         <!-- Message -->
         <div class="user-msg"></div>
 
-        <!-- Dialog -->
-        <dialog class="book-details-modal">
+        <!-- Modal (Read) -->
+        <dialog class="show-details-book-modal">
             <form method="dialog">
                 <button class="btn-close" title="Close" aria-label="Close">
                     <svg viewBox="0 0 24 24">
@@ -79,12 +90,15 @@
                         <line x1="6"  y1="6" x2="18" y2="18"/>
                     </svg>
                 </button>
-                <pre class="book-details-content"></pre>
+                <pre class="show-details-book-content"></pre>
                 <div class="book-rating-controls read-mode-rating-controls"></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-update" onclick="onEditBookFromDetails()">Edit</button>
+                </div>
             </form>
         </dialog>
 
-        <!-- Modal -->
+        <!-- Modal (Add / Update) -->
         <dialog class="add-update-book-modal">
             <form method="dialog" onsubmit="onSubmitBookForm(event)">
                 <h2></h2>

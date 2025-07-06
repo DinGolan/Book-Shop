@@ -41,11 +41,18 @@ function renderBooks() {
         elContainer.innerHTML = gridHTML; 
     }
 
-    onUpdatePaginationButtons();
+    // [Not Used] //
+    /**
+     * [Notes] :
+     * - We use with 'renderNavigatePageNumbers()' instead of 'onUpdatePaginationButtons()'.
+     **/
+    /* onUpdatePaginationButtons(); */
+
+    renderNavigatePageNumbers();
     onUpdateBooksStats();
 }
 
-// Render Books Table //
+// Render Books (Table) //
 function renderBooksTable(books) {
     let strHTML = `
         <table>
@@ -57,14 +64,17 @@ function renderBooksTable(books) {
             </colgroup>
             <thead>
                 <tr>
-                    <th onclick="onHeaderSortClick('title')" class="${gSortBy.field === 'title' ? 'sorted' : ''}">
-                        Title ${renderSortSymbol('title')}
+                    <th onclick="onHeaderSortClick('title')" 
+                        class="${gSortBy.field === 'title' ? 'sorted' : ''}">
+                            Title ${renderSortSymbol('title')}
                     </th>
-                    <th onclick="onHeaderSortClick('price')" class="${gSortBy.field === 'price' ? 'sorted' : ''}">
-                        Price ${renderSortSymbol('price')}
+                    <th onclick="onHeaderSortClick('price')" 
+                        class="${gSortBy.field === 'price' ? 'sorted' : ''}">
+                            Price ${renderSortSymbol('price')}
                     </th>
-                    <th onclick="onHeaderSortClick('rating')" class="${gSortBy.field === 'rating' ? 'sorted' : ''}">
-                        Rating ${renderSortSymbol('rating')}
+                    <th onclick="onHeaderSortClick('rating')" 
+                        class="${gSortBy.field === 'rating' ? 'sorted' : ''}">
+                            Rating ${renderSortSymbol('rating')}
                     </th>
                     <th>Actions</th>
                 </tr>
@@ -143,8 +153,8 @@ function onRemoveBook(bookId) {
 function onShowBookDetails(bookId) {
     const book = getBookById(bookId);
     
-    const elModal   = document.querySelector('.book-details-modal');
-    const elContent = elModal.querySelector('.book-details-content');
+    const elModal   = document.querySelector('.show-details-book-modal');
+    const elContent = elModal.querySelector('.show-details-book-content');
     
     elContent.innerHTML = JSON.stringify(book, null, 4);
 
@@ -153,6 +163,27 @@ function onShowBookDetails(bookId) {
     renderRatingControls(book.rating, '.read-mode-rating-controls'); 
 
     elModal.showModal();
+
+    // [TODO][Compare With Another Version In The Code] //
+    const newUrl = new URL(window.location.href);
+    newUrl.searchParams.set('bookId', bookId);
+    window.history.pushState({ path: newUrl }, '', newUrl);
+}
+
+function onEditBookFromDetails() {
+    const bookId = gCurrReadBookId;
+    if (!bookId) return;
+
+    const elModal = document.querySelector('.show-details-book-modal');
+    
+    // [TODO][Check Why We Close the Modal In This Line of Code] //
+    elModal.close()
+
+    onOpenModal(bookId);
+
+    const currUrl = new URL(window.location.href);
+    currUrl.searchParams.delete('bookId');
+    window.history.pushState({ path: currUrl }, '', currUrl);
 }
 
 // Filter Books //
@@ -179,9 +210,8 @@ function onClearFilter() {
 }
 
 function onUpdateClearBtnState() {
-    const elClearBtn   = document.querySelector('.clear-btn');
-    const shouldEnable = gFilterBy.title || gFilterBy.rating > 0;
-    
+    const elClearBtn    = document.querySelector('.btn-clear');
+    const shouldEnable  = gFilterBy.title || gFilterBy.rating > 0;
     elClearBtn.disabled = !shouldEnable;
 }
 
@@ -218,7 +248,7 @@ function onUpdateBooksStats() {
     elCheapCount.innerText     = cheapCount;
 }
 
-// Modal (Add Book) //
+// Modal (Add Book / Update Book) //
 function onOpenModal(bookId = null) {
     /**
      * [Notes] :
@@ -270,6 +300,11 @@ function onCloseModal() {
 
     const elAddBtn    = document.querySelector('.btn-add')
     elAddBtn.disabled = true;
+
+    // Remove 'bookId' from URL when modal is closed //
+    const currUrl = new URL(window.location.href);
+    currUrl.searchParams.delete('bookId');
+    window.history.pushState({ path: currUrl }, '', currUrl);
 }
 
 function onSubmitBookForm(event) {
@@ -357,7 +392,7 @@ function onChangeRating(diff) {
         const elReadRating     = document.querySelector('.read-mode-rating-controls .book-rating');
         elReadRating.innerText = book.rating;
         
-        const elContent     = document.querySelector('.book-details-content');
+        const elContent     = document.querySelector('.show-details-book-content');
         elContent.innerHTML = JSON.stringify(book, null, 4);
 
         renderRatingControls(book.rating, '.read-mode-rating-controls');
@@ -380,7 +415,7 @@ function readQueryParams() {
     
     const title     =  queryParams.get('title')     || EMPTY_STRING;
     const rating    = +queryParams.get('rating')    || 0;
-    const field     = queryParams.get('field')      || '';
+    const field     = queryParams.get('field')      || EMPTY_STRING;
     const direction = +queryParams.get('direction') || 1;
     const pageIdx   = +queryParams.get('pageIdx')   || 0;
 
@@ -388,7 +423,7 @@ function readQueryParams() {
     setFilterBy('rating', rating);
     setSortByField(field);
     setSortDirection(direction);
-    gQueryOptions.page.idx = pageIdx;
+    setPageIdx(pageIdx);
 
     const elFilterInput  = document.querySelector('.filter-container input');
     const elFilterSelect = document.querySelector('.filter-container select');
@@ -399,6 +434,12 @@ function readQueryParams() {
     elFilterSelect.value = rating;
     elSortInput.checked  = true;
     elSortSelect.value   = field;
+
+    // [TODO][Check this section , write note (details)] //
+    const bookId = queryParams.get('bookId');
+    if (bookId) {
+        onShowBookDetails(bookId);
+    }
 }
 
 function setQueryParams() {
@@ -470,6 +511,39 @@ function onUpdatePaginationButtons() {
 
     elPrevBtn.classList.toggle('disabled', shouldDisable);
     elNextBtn.classList.toggle('disabled', shouldDisable);
+}
+
+function renderNavigatePageNumbers() {
+    const totalBooks  = getTotalBooksCount();
+    const totalPages  = Math.ceil(totalBooks / PAGE_SIZE);
+    const currPageIdx = gQueryOptions.page.idx;
+
+    const elPagination = document.querySelector('.pagination-controls');
+
+    let strHTML = `
+        <button class="btn-prev" onclick="onChangePage(-1)">←</button>
+    `;
+
+    for (let i = 0; i < totalPages; i++) {
+        const isActive = (i === currPageIdx) ? 'active' : '';
+        strHTML       += `
+            <button class="btn-page ${isActive}" onclick="onGoToPage(${i})">${i + 1}</button> 
+        `;
+    }
+
+    strHTML += `
+        <button class="btn-next" onclick="onChangePage(1)">→</button>
+    `;
+
+    elPagination.innerHTML = strHTML;
+}
+
+function onGoToPage(pageIdx) {
+    // [TODO][Change the Name of the Variable] //
+    setPageIdx(pageIdx);
+
+    setQueryParams();
+    renderBooks();
 }
 
 // Sort Headers //

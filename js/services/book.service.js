@@ -157,6 +157,10 @@ function getTotalBooksCount() {
     }).length;
 }
 
+function setPageIdx(pageIdx) {
+    gQueryOptions.page.idx = pageIdx;
+}
+
 // Internal Functions //
 function _createBooks() {
     const books = loadFromStorage(STORAGE_KEY);

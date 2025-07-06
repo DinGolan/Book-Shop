@@ -91,7 +91,7 @@ h1 {
     padding: 6px 10px;
 }
 
-.clear-btn {
+.btn-clear {
     border: none;
     border-radius: 6px;
     background-color: #dcdcdc;
@@ -102,7 +102,7 @@ h1 {
     transition: opacity 0.2s ease; 
 }
 
-.clear-btn:disabled {
+.btn-clear:disabled {
     background-color: #eaeaea;
     color: #888;
     cursor: not-allowed;
@@ -283,6 +283,8 @@ button:hover {
     background-color: #d2691e;
 }
 
+/* [TODO][Check if this section needed] */
+/****************************************/
 .add-book-container {
     margin-top: 30px;
     margin-bottom: 10px;
@@ -305,6 +307,7 @@ button:hover {
 .add-book-btn:hover {
     background-color: #218838;
 }
+/****************************************/
 
 /* Message */
 .user-msg {
@@ -361,7 +364,7 @@ button:hover {
 }
 
 /* Modal (Show Details) */
-.book-details-modal {
+.show-details-book-modal {
     border: none;
     border-radius: 12px;
     background-color: #fff;
@@ -373,15 +376,15 @@ button:hover {
     width: 90%;
 }
 
-.book-details-modal::backdrop {
+.show-details-book-modal::backdrop {
     background-color: rgba(0, 0, 0, 0.3);
 }
 
-.book-details-modal form {
+.show-details-book-modal form {
     margin: 0;
 }
 
-.book-details-content {
+.show-details-book-content {
     color: #333;
     font-size: 0.95em;
     margin-top: 20px;
@@ -560,6 +563,22 @@ button:hover {
     opacity: 0.5;
     /* pointer-events: none; */
     cursor: not-allowed;
+}
+
+.btn-page {
+    border: 1px solid #6c63ff;
+    background-color: #fff;
+    border-radius: 6px;
+    color: #333;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 0 4px;
+    padding: 6px 12px;
+}
+
+.btn-page.active {
+    background-color: #6c63ff;
+    color: white;
 }
 
 /* Footer */
