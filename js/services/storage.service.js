@@ -8,7 +8,7 @@ function setDefaultDisplayMode() {
     /**
      * [Notes] :
      * - Initializes the display mode to 'table' by default.
-     * - If a different mode (e.g., 'grid') is stored in localStorage, it overrides it and forces 'table' as the default view on app load.
+     * - If a different mode (e.g. : 'grid') is stored in localStorage, it overrides it and forces 'table' as the default view on app load.
      **/
     gDisplayMode = loadFromStorage('displayMode') || 'table';
 
@@ -24,7 +24,7 @@ function loadFromStorage(key) {
 
     if (Array.isArray(jsonData)) {
         jsonData.forEach(book => {
-            if (book.rating === undefined || book.rating === null) {
+            if (book.rating === undefined || book.rating === null || book.rating === 0) {
                 book.rating = getRandomRating();
             }
         });

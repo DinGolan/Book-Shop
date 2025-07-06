@@ -164,7 +164,6 @@ function onShowBookDetails(bookId) {
 
     elModal.showModal();
 
-    // [TODO][Compare With Another Version In The Code] //
     const newUrl = new URL(window.location.href);
     newUrl.searchParams.set('bookId', bookId);
     window.history.pushState({ path: newUrl }, '', newUrl);
@@ -176,7 +175,11 @@ function onEditBookFromDetails() {
 
     const elModal = document.querySelector('.show-details-book-modal');
     
-    // [TODO][Check Why We Close the Modal In This Line of Code] //
+    /**
+     * [Notes] :
+     * - Close the "Read" modal before opening the "Edit" modal.
+     * - This ensures that only one <dialog> is open at a time, which avoids UI glitches and keeps the modal behavior valid.
+     **/
     elModal.close()
 
     onOpenModal(bookId);
@@ -435,7 +438,11 @@ function readQueryParams() {
     elSortInput.checked  = true;
     elSortSelect.value   = field;
 
-    // [TODO][Check this section , write note (details)] //
+    /**
+     * [Notes] :
+     * - If a bookId exists in the URL (e.g. : ?bookId=abc123), automatically open the book details modal for that book.
+     * - This enables bookmarking and deep linking directly to a book.
+     **/
     const bookId = queryParams.get('bookId');
     if (bookId) {
         onShowBookDetails(bookId);
@@ -539,9 +546,7 @@ function renderNavigatePageNumbers() {
 }
 
 function onGoToPage(pageIdx) {
-    // [TODO][Change the Name of the Variable] //
     setPageIdx(pageIdx);
-
     setQueryParams();
     renderBooks();
 }

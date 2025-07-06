@@ -283,8 +283,6 @@ button:hover {
     background-color: #d2691e;
 }
 
-/* [TODO][Check if this section needed] */
-/****************************************/
 .add-book-container {
     margin-top: 30px;
     margin-bottom: 10px;
@@ -307,7 +305,6 @@ button:hover {
 .add-book-btn:hover {
     background-color: #218838;
 }
-/****************************************/
 
 /* Message */
 .user-msg {

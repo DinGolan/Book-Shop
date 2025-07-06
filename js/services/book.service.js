@@ -45,8 +45,14 @@ _createBooks();
 // Book Data Utilities //
 function getBooks() {
     let books = gBooks.filter(book => {
-        return book.title.toLowerCase().includes(gFilterBy.title.toLowerCase()) &&
-               book.rating >= gFilterBy.rating;
+        const matchTitles = book.title.toLowerCase().includes(gFilterBy.title.toLowerCase());
+
+        /**
+         * [Notes] :
+         * - If no rating is selected (e.g. : gFilterBy.rating === 0), we don't want to filter out any books, so always return true.
+         **/
+        const matchRating = (gFilterBy.rating > 0) ? book.rating == gFilterBy.rating : true;
+        return matchTitles && matchRating;
     });
 
     const startIdx = gQueryOptions.page.idx * PAGE_SIZE;

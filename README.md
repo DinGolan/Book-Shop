@@ -1,7 +1,7 @@
 # 📚 Book Shop App
 
 - This is a simple CRUDL web application built with **JavaScript**, as part of the Coding Academy Full Stack training.  
-- It simulates a basic book shop with support for creating, viewing, updating, and deleting books — all with local persistence via `localStorage`.
+- It simulates a basic book shop with support for creating, viewing, updating, and deleting books - all with local persistence via `localStorage`.
 
 ---
 
