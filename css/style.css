@@ -147,6 +147,11 @@ th {
     font-weight: bold;
 }
 
+th.sorted {
+    color: #2e7d32;
+    font-weight: bold;
+}
+
 th:nth-child(1), td:nth-child(1) {
     padding-left: 10px;
 }

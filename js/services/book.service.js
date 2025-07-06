@@ -49,6 +49,9 @@ function getBooks() {
                book.rating >= gFilterBy.rating;
     });
 
+    const startIdx = gQueryOptions.page.idx * PAGE_SIZE;
+    books          = books.slice(startIdx, startIdx + PAGE_SIZE);
+
     if (gSortBy.field) {
         books.sort((book_1, book_2) => {
             if (gSortBy.field === 'title') {
@@ -58,9 +61,6 @@ function getBooks() {
             }
         });
     }
-
-    const startIdx = gQueryOptions.page.idx * PAGE_SIZE;
-    books          = books.slice(startIdx, startIdx + PAGE_SIZE);
 
     return books;
 }

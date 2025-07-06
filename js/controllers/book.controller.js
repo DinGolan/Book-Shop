@@ -50,16 +50,22 @@ function renderBooksTable(books) {
     let strHTML = `
         <table>
             <colgroup>
-                <col style="width: 50%">
-                <col style="width: 15%">
-                <col style="width: 25%">
-                <col style="width: 55%">
+                <col style="width: 250px">
+                <col style="width: 100px">
+                <col style="width: 150px">
+                <col style="width: 250px">
             </colgroup>
             <thead>
                 <tr>
-                    <th>Title</th>
-                    <th>Price</th>
-                    <th>Rating</th>
+                    <th onclick="onHeaderSortClick('title')" class="${gSortBy.field === 'title' ? 'sorted' : ''}">
+                        Title ${renderSortSymbol('title')}
+                    </th>
+                    <th onclick="onHeaderSortClick('price')" class="${gSortBy.field === 'price' ? 'sorted' : ''}">
+                        Price ${renderSortSymbol('price')}
+                    </th>
+                    <th onclick="onHeaderSortClick('rating')" class="${gSortBy.field === 'rating' ? 'sorted' : ''}">
+                        Rating ${renderSortSymbol('rating')}
+                    </th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -79,7 +85,7 @@ function renderBooksTable(books) {
             <tr>
                 <td>${book.title}</td>
                 <td>${book.price}</td>
-                <td class="book-rating-stars">${renderStars(book.rating)}</td>
+                <td class="book-rating-stars">${renderRatingStars(book.rating)}</td>
                 <td class="actions">
                     <button class="btn-read" onclick="onShowBookDetails('${book.id}')">Read</button>
                     <button class="btn-update" onclick="onOpenModal('${book.id}')">Update</button>
@@ -113,7 +119,7 @@ function renderBookCard(book) {
         <div class="book-card">
             <h3>${book.title}</h3>
             <p>Price : ${book.price}</p>
-            <p class="book-rating-stars">${renderStars(book.rating)}</p>
+            <p class="book-rating-stars">${renderRatingStars(book.rating)}</p>
             <div class="actions">
                 <button class="btn-read" onclick="onShowBookDetails('${book.id}')">Read</button>
                 <button class="btn-update" onclick="onOpenModal('${book.id}')">Update</button>
@@ -323,7 +329,7 @@ function onToggleDisplayMode() {
 }
 
 // Book Rating //
-function renderStars(rating) {
+function renderRatingStars(rating) {
     const fullStars  = '★'.repeat(rating);
     const emptyStars = '☆'.repeat(5 - rating);
     return fullStars + emptyStars;
@@ -464,6 +470,24 @@ function onUpdatePaginationButtons() {
 
     elPrevBtn.classList.toggle('disabled', shouldDisable);
     elNextBtn.classList.toggle('disabled', shouldDisable);
+}
+
+// Sort Headers //
+function renderSortSymbol(field) {
+    if (gSortBy.field !== field) return '';
+    return gSortBy.direction === 1 ? '(+)' : '(─)';
+}
+
+function onHeaderSortClick(field) {
+    if (gSortBy.field === field) {
+        gSortBy.direction *= -1; // Toggle Direction //
+    } else {
+        gSortBy.field     = field;
+        gSortBy.direction = 1;
+    }
+
+    setQueryParams();
+    renderBooks();
 }
 
 /*********************************************************/
