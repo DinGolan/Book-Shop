@@ -80,14 +80,14 @@
                     </svg>
                 </button>
                 <pre class="book-details-content"></pre>
-                <div class="book-rating-controls"></div>
+                <div class="book-rating-controls read-mode-rating-controls"></div>
             </form>
         </dialog>
 
         <!-- Modal -->
         <dialog class="add-update-book-modal">
             <form method="dialog" onsubmit="onSubmitBookForm(event)">
-                <h2>Add New Book</h2>
+                <h2></h2>
                 <label>
                     Title :
                     <input type="text" class="book-title-input" required />
@@ -96,6 +96,7 @@
                     Price :
                     <input type="number" class="book-price-input" required min="0" />
                 </label>
+                <div class="book-rating-controls edit-mode-rating-controls"></div>
                 <div class="modal-actions">
                     <button type="submit" class="btn-add" disabled>Add</button>
                     <button type="button" class="btn-cancel" onclick="onCloseModal()">Cancel</button>

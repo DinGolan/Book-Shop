@@ -10,9 +10,10 @@ const MILLI_SECONDS = 2000;
 var gMsgTimeoutId = null;
 
 /* Global Variables (Generals) */
-var gCurrReadBookId = null;
-var gDisplayMode    = null;
-var gEditedBookId   = null;
+var gCurrReadBookId   = null;
+var gDisplayMode      = null;
+var gEditedBookId     = null;
+var gEditedBookRating = 0;
 
 // --- //
 
@@ -143,38 +144,9 @@ function onShowBookDetails(bookId) {
 
     gCurrReadBookId = bookId;
 
-    renderRatingControls(book.rating); 
+    renderRatingControls(book.rating, '.read-mode-rating-controls'); 
 
     elModal.showModal();
-}
-
-function renderRatingControls(rating) {
-    const elRatingControls = document.querySelector('.book-rating-controls');
-
-    elRatingControls.innerHTML = `
-        <button type="button" onclick="onChangeRating(-1)">
-            <div class="circle-icon">─</div>
-        </button>
-        <span class="book-rating">${rating ?? 0}</span>
-        <button type="button" onclick="onChangeRating(1)">
-            <div class="circle-icon">+</div>
-        </button>
-    `;
-}
-
-function onChangeRating(diff) {
-    if (!gCurrReadBookId) return;
-
-    const book = updateBookRating(gCurrReadBookId, diff);
-    if (!book) return;
-
-    const elRating     = document.querySelector('.book-rating');
-    elRating.innerText = book.rating;
-    
-    const elContent     = document.querySelector('.book-details-content');
-    elContent.innerHTML = JSON.stringify(book, null, 4);
-
-    renderRatingControls(book.rating); 
 }
 
 // Filter Books //
@@ -242,6 +214,15 @@ function onUpdateBooksStats() {
 
 // Modal (Add Book) //
 function onOpenModal(bookId = null) {
+    /**
+     * [Notes] :
+     * - Reset read mode state when opening the Add/Update modal.
+     * - This ensures the rating controls behave in "edit mode".
+     * - Without this, the onChangeRating() function will mistakenly
+     *   treat it as "read mode" and try to update an existing book instead.
+     **/
+    gCurrReadBookId = null;
+
     const elModal = document.querySelector('.add-update-book-modal');
 
     const elModalTitle = elModal.querySelector('h2');
@@ -257,13 +238,16 @@ function onOpenModal(bookId = null) {
         const book = getBookById(bookId);
         elBookTitleInput.value = book.title;
         elBookPriceInput.value = book.price;
+        gEditedBookRating      = book.rating;
         elAddBtn.innerText     = 'Save Changes';
     } else {
         elBookTitleInput.value = '';
         elBookPriceInput.value = '';
+        gEditedBookRating      = 0;
         elAddBtn.innerText     = 'Add';
     }
 
+    renderRatingControls(gEditedBookRating, '.edit-mode-rating-controls');
     elAddBtn.disabled = true;
     elModal.showModal();
 }
@@ -300,10 +284,10 @@ function onSubmitBookForm(event) {
     }
 
     if (gEditedBookId) {
-        updateBook(gEditedBookId, title, price);
+        updateBook(gEditedBookId, title, price, gEditedBookRating);
         showMsg(`[Success] Book updated successfully.`, 'success');
     } else {
-        addBook(title, price);
+        addBook(title, price, gEditedBookRating);
         showMsg(`[Success] Book added successfully.`, 'success');
     }
     
@@ -343,6 +327,45 @@ function renderStars(rating) {
     const fullStars  = '★'.repeat(rating);
     const emptyStars = '☆'.repeat(5 - rating);
     return fullStars + emptyStars;
+}
+
+function renderRatingControls(rating, containerSelector) {
+    const elRatingControls = document.querySelector(containerSelector);
+
+    elRatingControls.innerHTML = `
+        <button type="button" onclick="onChangeRating(-1)">
+            <div class="circle-icon">─</div>
+        </button>
+        <span class="book-rating">${rating ?? 0}</span>
+        <button type="button" onclick="onChangeRating(1)">
+            <div class="circle-icon">+</div>
+        </button>
+    `;
+}
+
+function onChangeRating(diff) {
+    if (gCurrReadBookId) {
+        const book = updateBookRating(gCurrReadBookId, diff);
+        if (!book) return;
+
+        const elReadRating     = document.querySelector('.read-mode-rating-controls .book-rating');
+        elReadRating.innerText = book.rating;
+        
+        const elContent     = document.querySelector('.book-details-content');
+        elContent.innerHTML = JSON.stringify(book, null, 4);
+
+        renderRatingControls(book.rating, '.read-mode-rating-controls');
+    } else {
+        gEditedBookRating += diff;
+
+        if (gEditedBookRating < 0) gEditedBookRating = 0;
+        if (gEditedBookRating > 5) gEditedBookRating = 5;
+
+        const elEditRating     = document.querySelector('.edit-mode-rating-controls .book-rating');
+        elEditRating.innerText = gEditedBookRating;
+
+        onModalInputChange();
+    }
 }
 
 // Query Params //

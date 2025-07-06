@@ -83,14 +83,15 @@ function removeBook(bookId) {
 }
 
 // Update Book //
-function updateBook(bookId, newTitle, newPrice) {
+function updateBook(bookId, newTitle, newPrice, newRating) {
     const book = getBookById(bookId);
     if (!book) return null;
 
     if (book.title === newTitle && book.price === newPrice) return book;
 
-    book.title = newTitle;
-    book.price = newPrice;
+    book.title  = newTitle;
+    book.price  = newPrice;
+    book.rating = newRating;
 
     _saveBooks();
     return book;
@@ -111,8 +112,8 @@ function updateBookRating(bookId, diff) {
 }
 
 // Add Book //
-function addBook(title, price) {
-    const newBook = _createBook(title, price);
+function addBook(title, price, rating = getRandomRating()) {
+    const newBook = _createBook(title, price, rating);
     gBooks.push(newBook);
     _saveBooks();
 }
@@ -168,13 +169,13 @@ function _createBooks() {
     }
 }
 
-function _createBook(title, price) {
+function _createBook(title, price, rating = getRandomRating()) {
     return {
         id: generateRandomId(),
         title,
         price,
         imgUrl: generateImageUrl(title),
-        rating: getRandomRating()
+        rating
     };
 }
 
