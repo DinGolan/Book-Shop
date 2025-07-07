@@ -19,7 +19,7 @@ function generateRandomId() {
     const lowerLetters = 'abcdefghijklmnopqrstuvwxyz';
     const chars        = upperLetters + lowerLetters + digits;
     
-    let newId   = '';
+    let newId   = EMPTY_STRING;
     let randIdx = null;
     for (let i = 0; i < SIZE; i++) {
         randIdx = Math.floor(Math.random() * chars.length);

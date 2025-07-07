@@ -36,6 +36,7 @@
                 <option value="5">⭐⭐⭐⭐⭐</option>
             </select>
             <button class="btn-clear" onclick="onClearFilter()">Clear</button>
+            <button class="btn-reset" onclick="onResetState()">Reset</button>
         </div>
 
         <!-- Sort -->
@@ -65,8 +66,15 @@
 
         <!-- Button -->
         <div class="add-book-container">
-            <button class="add-book-btn" onclick="onOpenModal()">Add Book</button>
+            <button class="btn-add-book" onclick="onOpenModal()">Add Book</button>
         </div>
+
+        <!-- Pagination -->
+        <div class="pagination-controls">
+            <button class="btn-prev" onclick="onChangePage(-1)">Prev</button>
+            <button class="btn-next" onclick="onChangePage(1)">Next</button>
+        </div>
+
 
         <!-- Message -->
         <div class="user-msg"></div>
@@ -102,17 +110,11 @@
                 </label>
                 <div class="book-rating-controls edit-mode-rating-controls"></div>
                 <div class="modal-actions">
-                    <button type="submit" class="btn-add" disabled>Add</button>
+                    <button type="submit" class="btn-add-book-modal" disabled>Add</button>
                     <button type="button" class="btn-cancel" onclick="onCloseModal()">Cancel</button>
                 </div>
             </form>
         </dialog>
-    </div>
-
-    <!-- Pagination -->
-    <div class="pagination-controls">
-        <button class="btn-prev" onclick="onChangePage(-1)">Prev</button>
-        <button class="btn-next" onclick="onChangePage(1)">Next</button>
     </div>
 
     <!-- Footer -->

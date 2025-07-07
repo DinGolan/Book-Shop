@@ -75,7 +75,7 @@ h1 {
     font-size: 1em;
     height: 37.34px;
     margin-left: 10px;
-    margin-right: 0;
+    margin-right: 5px;
     padding: 6px 10px;
 }
 
@@ -98,6 +98,7 @@ h1 {
     color: #333;
     cursor: pointer;
     font-weight: bold;
+    margin-right: 0px;
     padding: 6px 12px;
     transition: opacity 0.2s ease; 
 }
@@ -107,6 +108,23 @@ h1 {
     color: #888;
     cursor: not-allowed;
     opacity: 0.7;
+}
+
+/* Reset */
+.btn-reset {
+    border: 1px solid #e53935;
+    border-radius: 6px;
+    background-color: #ffebee;
+    color: #c62828;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 8px;
+    padding: 6px 12px;
+    transition: background-color 0.2s;
+}
+
+.btn-reset:hover {
+    background-color: #ffcdd2;
 }
 
 /* Table */
@@ -289,7 +307,7 @@ button:hover {
     text-align: center;
 }
 
-.add-book-btn {
+.btn-add-book {
     border: none;
     border-radius: 30px;
     background-color: #28a745;
@@ -302,7 +320,7 @@ button:hover {
     transition: background-color 0.3s ease;
 }
 
-.add-book-btn:hover {
+.btn-add-book:hover {
     background-color: #218838;
 }
 
@@ -345,6 +363,11 @@ button:hover {
     cursor: pointer;
     margin-left: 10px;
     margin-right: 10px;
+}
+
+.sort-container input[type="radio"]:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
 }
 
 .sort-container select {
@@ -515,12 +538,12 @@ button:hover {
     transition: background-color 0.3s ease;
 }
 
-.btn-add {
+.btn-add-book-modal {
     background-color: #28a745;
     color: white;
 }
 
-.btn-add:disabled {
+.btn-add-book-modal:disabled {
     background-color: #a5d6a7;
     cursor: not-allowed;
 }
@@ -537,8 +560,8 @@ button:hover {
 
 /* Pagination */
 .pagination-controls {
-    margin-top: 20px;
-    margin-bottom: 30px;
+    margin-top: 30px;
+    margin-bottom: 35px;
     text-align: center;
 }
 
@@ -556,9 +579,9 @@ button:hover {
     transform: scale(1.05);
 }
 
-.pagination-controls .disabled {
+.pagination-controls .disabled,
+.pagination-controls button:disabled {
     opacity: 0.5;
-    /* pointer-events: none; */
     cursor: not-allowed;
 }
 

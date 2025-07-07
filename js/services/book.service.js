@@ -44,29 +44,17 @@ _createBooks();
 
 // Book Data Utilities //
 function getBooks() {
-    let books = gBooks.filter(book => {
-        const matchTitles = book.title.toLowerCase().includes(gFilterBy.title.toLowerCase());
+    let filteredBooks = filterBooks(gBooks);
 
-        /**
-         * [Notes] :
-         * - If no rating is selected (e.g. : gFilterBy.rating === 0), we don't want to filter out any books, so always return true.
-         **/
-        const matchRating = (gFilterBy.rating > 0) ? book.rating == gFilterBy.rating : true;
-        return matchTitles && matchRating;
-    });
+    const totalPages = Math.ceil(filteredBooks.length / PAGE_SIZE);
+    if (gQueryOptions.page.idx >= totalPages) {
+        gQueryOptions.page.idx = 0;
+    }
 
     const startIdx = gQueryOptions.page.idx * PAGE_SIZE;
-    books          = books.slice(startIdx, startIdx + PAGE_SIZE);
+    let books      = filteredBooks.slice(startIdx, startIdx + PAGE_SIZE);
 
-    if (gSortBy.field) {
-        books.sort((book_1, book_2) => {
-            if (gSortBy.field === 'title') {
-                return book_1.title.localeCompare(book_2.title) * gSortBy.direction;
-            } else {
-                return (book_1[gSortBy.field] - book_2[gSortBy.field]) * gSortBy.direction;
-            }
-        });
-    }
+    if (gSortBy.field) sortBooks(books);
 
     return books;
 }
@@ -125,6 +113,19 @@ function addBook(title, price, rating = getRandomRating()) {
 }
 
 // Filter Books //
+function filterBooks(books) {
+    return books.filter(book => {
+        const matchTitles = book.title.toLowerCase().includes(gFilterBy.title.toLowerCase());
+
+        /**
+         * [Notes] :
+         * - If no rating is selected (e.g. : gFilterBy.rating === 0), we don't want to filter out any books, so always return true.
+         **/
+        const matchRating = (gFilterBy.rating > 0) ? book.rating == gFilterBy.rating : true;
+        return matchTitles && matchRating;
+    });
+}
+
 function setFilterBy(filterProperty, filterValue) {
     gFilterBy[filterProperty] = filterValue;
 }
@@ -139,7 +140,7 @@ function clearMsgTimeout() {
 
 // Validation Functions //
 function isValidTitle(title) {
-    return typeof title === 'string' && title.trim() !== '';
+    return typeof title === 'string' && title.trim() !== EMPTY_STRING;
 }
 
 function isValidPrice(price) {
@@ -147,6 +148,16 @@ function isValidPrice(price) {
 }
 
 // Sort Functions //
+function sortBooks(books) {
+    books.sort((book_1, book_2) => {
+        if (gSortBy.field === 'title') {
+            return book_1.title.localeCompare(book_2.title) * gSortBy.direction;
+        } else {
+            return (book_1[gSortBy.field] - book_2[gSortBy.field]) * gSortBy.direction;
+        }
+    });
+}
+
 function setSortByField(field) {
     gSortBy.field = field;
 }
@@ -157,10 +168,7 @@ function setSortDirection(direction) {
 
 // Pagination //
 function getTotalBooksCount() {
-    return gBooks.filter(book => {
-        return book.title.toLowerCase().includes(gFilterBy.title.toLowerCase()) &&
-               book.rating >= gFilterBy.rating;
-    }).length;
+    return filterBooks(gBooks).length;
 }
 
 function setPageIdx(pageIdx) {

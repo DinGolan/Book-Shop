@@ -166,7 +166,7 @@ function onShowBookDetails(bookId) {
 
     const newUrl = new URL(window.location.href);
     newUrl.searchParams.set('bookId', bookId);
-    window.history.pushState({ path: newUrl }, '', newUrl);
+    window.history.pushState({ }, '', newUrl);
 }
 
 function onEditBookFromDetails() {
@@ -186,12 +186,13 @@ function onEditBookFromDetails() {
 
     const currUrl = new URL(window.location.href);
     currUrl.searchParams.delete('bookId');
-    window.history.pushState({ path: currUrl }, '', currUrl);
+    window.history.pushState({ }, '', currUrl);
 }
 
 // Filter Books //
 function onFilterBy(filterProperty, filterValue) {
     setFilterBy(filterProperty, filterValue);
+    setPageIdx(0);
     onUpdateClearBtnState();
     setQueryParams();
     renderBooks();
@@ -206,6 +207,7 @@ function onClearFilter() {
 
     setFilterBy('title', EMPTY_STRING);
     setFilterBy('rating', 0);
+    setPageIdx(0);
 
     onUpdateClearBtnState();
     setQueryParams();
@@ -217,6 +219,29 @@ function onUpdateClearBtnState() {
     const shouldEnable  = gFilterBy.title || gFilterBy.rating > 0;
     elClearBtn.disabled = !shouldEnable;
 }
+
+// Reset State //
+function onResetState() {
+    setFilterBy('title', '');
+    setFilterBy('rating', 0);
+    setSortByField('');
+    setSortDirection(1);
+    setPageIdx(0);
+
+    const elFilterInput  = document.querySelector('.filter-container input');
+    const elFilterSelect = document.querySelector('.filter-container select');
+    const elSortInput    = document.querySelectorAll(`.sort-container input[type="radio"]`);
+    const elSortSelect   = document.querySelector('.sort-container select');
+
+    elFilterInput.value          = EMPTY_STRING;
+    elFilterSelect.selectedIndex = 0;
+    elSortSelect.selectedIndex   = 0;
+    elSortInput.forEach(radioBtn => radioBtn.checked = false);
+
+    setQueryParams();
+    renderBooks();
+}
+
 
 // Show Message //
 function showMsg(txt, type) {
@@ -269,7 +294,7 @@ function onOpenModal(bookId = null) {
 
     const elBookTitleInput = document.querySelector('.book-title-input');
     const elBookPriceInput = document.querySelector('.book-price-input');
-    const elAddBtn         = document.querySelector('.btn-add');
+    const elAddBtn         = document.querySelector('.btn-add-book-modal');
 
     gEditedBookId = bookId;
 
@@ -280,8 +305,8 @@ function onOpenModal(bookId = null) {
         gEditedBookRating      = book.rating;
         elAddBtn.innerText     = 'Save Changes';
     } else {
-        elBookTitleInput.value = '';
-        elBookPriceInput.value = '';
+        elBookTitleInput.value = EMPTY_STRING;
+        elBookPriceInput.value = EMPTY_STRING;
         gEditedBookRating      = 0;
         elAddBtn.innerText     = 'Add';
     }
@@ -296,18 +321,18 @@ function onCloseModal() {
     elModal.close();
 
     const elBookTitleInput = document.querySelector('.book-title-input');
-    elBookTitleInput.value = '';
+    elBookTitleInput.value = EMPTY_STRING;
 
     const elBookPriceInput = document.querySelector('.book-price-input');
-    elBookPriceInput.value = '';
+    elBookPriceInput.value = EMPTY_STRING;
 
-    const elAddBtn    = document.querySelector('.btn-add')
+    const elAddBtn    = document.querySelector('.btn-add-book-modal')
     elAddBtn.disabled = true;
 
     // Remove 'bookId' from URL when modal is closed //
     const currUrl = new URL(window.location.href);
     currUrl.searchParams.delete('bookId');
-    window.history.pushState({ path: currUrl }, '', currUrl);
+    window.history.pushState({ }, '', currUrl);
 }
 
 function onSubmitBookForm(event) {
@@ -352,7 +377,7 @@ function onModalInputChange() {
     const title = elBookTitleInput.value.trim();
     const price = +elBookPriceInput.value;
 
-    const elAddBtn    = document.querySelector('.btn-add');
+    const elAddBtn    = document.querySelector('.btn-add-book-modal');
     elAddBtn.disabled = !(isValidTitle(title) && isValidPrice(price));
 
     const elCancelBtn    = document.querySelector('.btn-cancel');
@@ -414,6 +439,8 @@ function onChangeRating(diff) {
 
 // Query Params //
 function readQueryParams() {
+    if (!window.location.search) return; // If there are no query parameters, skip parsing //
+
     const queryParams = new URLSearchParams(window.location.search);
     
     const title     =  queryParams.get('title')     || EMPTY_STRING;
@@ -477,17 +504,28 @@ function setQueryParams() {
 // Sort Books //
 function onSetSortByField(field) {
     setSortByField(field);
+
+    const isDisabled = !field;
+
+    const elSortContainer = document.querySelectorAll('.sort-container input[type="radio"]');
+    elSortContainer.forEach(radio => { radio.disabled = isDisabled; });
+
+    setPageIdx(0);
+    setQueryParams();
     renderBooks();
 }
 
 function onSetSortDirection(direction) {
+    const elSortSelect  = document.querySelector('.sort-container select');
+    const selectedField = elSortSelect.value;
+
+    if (!selectedField) return;
+
+    setSortByField(selectedField);
     setSortDirection(direction);
 
-    if (!gSortBy.field) {
-        const elSortSelect         = document.querySelector('.sort-container select');
-        elSortSelect.selectedIndex = 0;
-    }
-
+    setPageIdx(0);
+    setQueryParams();
     renderBooks();
 }
 
@@ -527,19 +565,26 @@ function renderNavigatePageNumbers() {
 
     const elPagination = document.querySelector('.pagination-controls');
 
+    if (totalPages === 0) {
+        elPagination.innerHTML = '';
+        return;
+    }
+
+    const shouldDisable = totalPages <= 1;
+
     let strHTML = `
-        <button class="btn-prev" onclick="onChangePage(-1)">←</button>
+        <button class="btn-prev" onclick="onChangePage(-1)" ${shouldDisable ? 'disabled' : ''}>←</button>
     `;
 
     for (let i = 0; i < totalPages; i++) {
         const isActive = (i === currPageIdx) ? 'active' : '';
-        strHTML       += `
+        strHTML += `
             <button class="btn-page ${isActive}" onclick="onGoToPage(${i})">${i + 1}</button> 
         `;
     }
 
     strHTML += `
-        <button class="btn-next" onclick="onChangePage(1)">→</button>
+        <button class="btn-next" onclick="onChangePage(1)" ${shouldDisable ? 'disabled' : ''}>→</button>
     `;
 
     elPagination.innerHTML = strHTML;
@@ -565,6 +610,13 @@ function onHeaderSortClick(field) {
         gSortBy.direction = 1;
     }
 
+    const elSortSelect = document.querySelector('.sort-container select');
+    elSortSelect.value = gSortBy.field;
+
+    const elDirectionInput = document.querySelector(`.sort-container input[value="${gSortBy.direction}"]`);
+    if (elDirectionInput) elDirectionInput.checked = true;
+
+    setPageIdx(0);
     setQueryParams();
     renderBooks();
 }
