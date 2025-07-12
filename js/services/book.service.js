@@ -17,12 +17,12 @@ var gQueryOptions = {
     },
 
     filterBy: {
-        title: '',
+        title: EMPTY_STRING,
         rating: 0
     },
 
     sortBy: {
-        field: '',
+        field: EMPTY_STRING,
         direction: 1
     }
 };
@@ -44,6 +44,22 @@ _createBooks();
 
 // Book Data Utilities //
 function getBooks() {
+    /**
+     * [Description] :
+     * 
+     * Purpose :
+     * - Returns the list of books to display after applying filter, pagination, and sorting.
+     * 
+     * Process :
+     * 1. Filters the full books array based on title and rating.
+     * 2. Calculates the total number of pages based on PAGE_SIZE.
+     *    - If the current page index is out of bounds (e.g. after deletion), it resets to 0.
+     * 3. Slices the filtered books array to get only the books for the current page.
+     * 4. If a sort field is selected, applies sorting to the current page's books.
+     * 
+     * Returns :
+     * - An array of books ready to be rendered on the current page.
+     **/
     let filteredBooks = filterBooks(gBooks);
 
     const totalPages = Math.ceil(filteredBooks.length / PAGE_SIZE);
@@ -118,7 +134,7 @@ function filterBooks(books) {
         const matchTitles = book.title.toLowerCase().includes(gFilterBy.title.toLowerCase());
 
         /**
-         * [Notes] :
+         * [Description] :
          * - If no rating is selected (e.g. : gFilterBy.rating === 0), we don't want to filter out any books, so always return true.
          **/
         const matchRating = (gFilterBy.rating > 0) ? book.rating == gFilterBy.rating : true;
@@ -219,25 +235,4 @@ function _generateDefaultBooks() {
 
 function _saveBooks() {
     saveToStorage(STORAGE_KEY, gBooks);
-}
-
-/*********************************************************/
-
-/* Not Used */
-function updateBookPrice(bookId, newPrice) {
-    /* Option (1) */
-    const book = getBookById(bookId);
-    if (!book) return;
-    
-    book.price = newPrice;
-    _saveBooks();
-
-    /* Option (2) */
-    /**
-     * const bookIdx = gBooks.findIndex(book => book.id === bookId);
-     * if (bookIdx === -1) return;
-     * 
-     * gBooks[bookIdx].price = newPrice;
-     * _saveBooks();
-     **/
 }

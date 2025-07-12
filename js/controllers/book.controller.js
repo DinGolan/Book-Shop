@@ -41,13 +41,6 @@ function renderBooks() {
         elContainer.innerHTML = gridHTML; 
     }
 
-    // [Not Used] //
-    /**
-     * [Notes] :
-     * - We use with 'renderNavigatePageNumbers()' instead of 'onUpdatePaginationButtons()'.
-     **/
-    /* onUpdatePaginationButtons(); */
-
     renderNavigatePageNumbers();
     onUpdateBooksStats();
 }
@@ -65,15 +58,15 @@ function renderBooksTable(books) {
             <thead>
                 <tr>
                     <th onclick="onHeaderSortClick('title')" 
-                        class="${gSortBy.field === 'title' ? 'sorted' : ''}">
+                        class="${gSortBy.field === 'title' ? 'sorted' : EMPTY_STRING}">
                             Title ${renderSortSymbol('title')}
                     </th>
                     <th onclick="onHeaderSortClick('price')" 
-                        class="${gSortBy.field === 'price' ? 'sorted' : ''}">
+                        class="${gSortBy.field === 'price' ? 'sorted' : EMPTY_STRING}">
                             Price ${renderSortSymbol('price')}
                     </th>
                     <th onclick="onHeaderSortClick('rating')" 
-                        class="${gSortBy.field === 'rating' ? 'sorted' : ''}">
+                        class="${gSortBy.field === 'rating' ? 'sorted' : EMPTY_STRING}">
                             Rating ${renderSortSymbol('rating')}
                     </th>
                     <th>Actions</th>
@@ -91,22 +84,26 @@ function renderBooksTable(books) {
             </tr>
         `;
     } else {
-        strHTML += books.map(book => `
-            <tr>
-                <td>${book.title}</td>
-                <td>${book.price}</td>
-                <td class="book-rating-stars">${renderRatingStars(book.rating)}</td>
-                <td class="actions">
-                    <button class="btn-read" onclick="onShowBookDetails('${book.id}')">Read</button>
-                    <button class="btn-update" onclick="onOpenModal('${book.id}')">Update</button>
-                    <button class="btn-delete" onclick="onRemoveBook('${book.id}')">Delete</button>
-                </td>
-            </tr>
-        `).join('');
+        strHTML += books.map(renderBooksTableRow).join(EMPTY_STRING);
     }
 
     strHTML += '</tbody></table>';
     return strHTML;
+}
+
+function renderBooksTableRow(book) {
+    return `
+        <tr>
+            <td>${book.title}</td>
+            <td>${book.price}</td>
+            <td class="book-rating-stars">${renderRatingStars(book.rating)}</td>
+            <td class="actions">
+                <button class="btn-read" onclick="onShowBookDetails('${book.id}')">Read</button>
+                <button class="btn-update" onclick="onOpenModal('${book.id}')">Update</button>
+                <button class="btn-delete" onclick="onRemoveBook('${book.id}')">Delete</button>
+            </td>
+        </tr>
+    `;
 }
 
 // Render Books (Grid) //
@@ -118,7 +115,7 @@ function renderBooksGrid(elContainer, books) {
         return strHTML;
     }
 
-    strHTML += books.map(renderBookCard).join('');
+    strHTML += books.map(renderBookCard).join(EMPTY_STRING);
     strHTML += '</div>';
 
     return strHTML;
@@ -151,6 +148,18 @@ function onRemoveBook(bookId) {
 
 // Show Book Details //
 function onShowBookDetails(bookId) {
+    /**
+     * [Description] :
+     * - Opens the "Read" modal with detailed information about the selected book.
+     * 
+     * Steps :
+     * 1. Retrieves the book object by its ID.
+     * 2. Selects and populates the modal content with the book's JSON data.
+     * 3. Stores the current book ID in a global variable for future actions (e.g., rating/editing).
+     * 4. Renders the rating controls in "read mode".
+     * 5. Displays the modal using the <dialog> API.
+     * 6. Updates the URL with the bookId as a query parameter (for deep-linking).
+     **/
     const book = getBookById(bookId);
     
     const elModal   = document.querySelector('.show-details-book-modal');
@@ -166,17 +175,29 @@ function onShowBookDetails(bookId) {
 
     const newUrl = new URL(window.location.href);
     newUrl.searchParams.set('bookId', bookId);
-    window.history.pushState({ }, '', newUrl);
+    window.history.pushState({ }, EMPTY_STRING, newUrl);
 }
 
 function onEditBookFromDetails() {
+    /**
+     * [Description] :
+     * 
+     * Purpose :
+     * - Transitions from "Read" mode (book details view) to "Edit" mode (book form modal).
+     * 
+     * Steps :
+     * 1. Retrieves the currently viewed book ID.
+     * 2. Closes the "Read" modal to ensure only one <dialog> is open at a time.
+     * 3. Opens the "Edit" modal pre-filled with the selected book's data.
+     * 4. Cleans the URL by removing the 'bookId' query parameter to prevent modal auto-open on refresh.
+     **/
     const bookId = gCurrReadBookId;
     if (!bookId) return;
 
     const elModal = document.querySelector('.show-details-book-modal');
     
     /**
-     * [Notes] :
+     * [Description] :
      * - Close the "Read" modal before opening the "Edit" modal.
      * - This ensures that only one <dialog> is open at a time, which avoids UI glitches and keeps the modal behavior valid.
      **/
@@ -186,7 +207,7 @@ function onEditBookFromDetails() {
 
     const currUrl = new URL(window.location.href);
     currUrl.searchParams.delete('bookId');
-    window.history.pushState({ }, '', currUrl);
+    window.history.pushState({ }, EMPTY_STRING, currUrl);
 }
 
 // Filter Books //
@@ -222,24 +243,22 @@ function onUpdateClearBtnState() {
 
 // Reset State //
 function onResetState() {
-    setFilterBy('title', '');
+    setFilterBy('title', EMPTY_STRING);
     setFilterBy('rating', 0);
-    setSortByField('');
+    setSortByField(EMPTY_STRING);
     setSortDirection(1);
     setPageIdx(0);
 
     const elFilterInput  = document.querySelector('.filter-container input');
     const elFilterSelect = document.querySelector('.filter-container select');
-    const elSortInput    = document.querySelectorAll(`.sort-container input[type="radio"]`);
+    const elRadioBtns    = document.querySelectorAll(`.sort-container input[type="radio"]`);
     const elSortSelect   = document.querySelector('.sort-container select');
 
     elFilterInput.value          = EMPTY_STRING;
     elFilterSelect.selectedIndex = 0;
     elSortSelect.selectedIndex   = 0;
-    elSortInput.forEach(radioBtn => radioBtn.checked = false);
-
-    const elSortRadios = document.querySelectorAll('.radio-btn');
-    elSortRadios.forEach(radio => radio.toggleAttribute('disabled', true));
+    elRadioBtns.forEach(radioBtn => radioBtn.checked = false);
+    elRadioBtns.forEach(radioBtn => radioBtn.toggleAttribute('disabled', true));
 
     onUpdateClearBtnState();
     setQueryParams();
@@ -264,6 +283,10 @@ function showMsg(txt, type) {
 
 // Show Stats //
 function onUpdateBooksStats() {
+    /**
+     * [Description] :
+     * - Updates the footer with the number of expensive, average, and cheap books based on their price ranges.
+     **/
     const books = getBooks();
 
     const expensiveCount = books.filter(book => book.price > 200).length;
@@ -282,7 +305,7 @@ function onUpdateBooksStats() {
 // Modal (Add Book / Update Book) //
 function onOpenModal(bookId = null) {
     /**
-     * [Notes] :
+     * [Description] :
      * - Reset read mode state when opening the Add/Update modal.
      * - This ensures the rating controls behave in "edit mode".
      * - Without this, the onChangeRating() function will mistakenly
@@ -335,7 +358,7 @@ function onCloseModal() {
     // Remove 'bookId' from URL when modal is closed //
     const currUrl = new URL(window.location.href);
     currUrl.searchParams.delete('bookId');
-    window.history.pushState({ }, '', currUrl);
+    window.history.pushState({ }, EMPTY_STRING, currUrl);
 }
 
 function onSubmitBookForm(event) {
@@ -416,6 +439,26 @@ function renderRatingControls(rating, containerSelector) {
 }
 
 function onChangeRating(diff) {
+    /**
+     * [Description] :
+     * 
+     * Purpose :
+     * - Handles changes to a book's rating, either in "read" mode (details view)
+     *   or in "edit" mode (add/update form).
+     * 
+     * Parameters :
+     * - diff (number) - the change in rating (usually +1 or -1).
+     * 
+     * Behavior :
+     * 1. If in "read mode" (a book is being viewed) :
+     *    - Updates the rating of the currently viewed book.
+     *    - Reflects the new rating visually in the modal and updates the JSON display.
+     * 2. If in "edit mode" (no book is being read) :
+     *    - Updates the temporary rating value being edited.
+     *    - Clamps the value between 0 and 5.
+     *    - Updates the rating display in the form.
+     *    - Re-triggers form validation to enable/disable the "Add" button accordingly.
+     **/
     if (gCurrReadBookId) {
         const book = updateBookRating(gCurrReadBookId, diff);
         if (!book) return;
@@ -442,13 +485,25 @@ function onChangeRating(diff) {
 
 // Query Params //
 function readQueryParams() {
+    /**
+     * [Description] :
+     * 
+     * Purpose of readQueryParams() :
+     * - Reads filter, sort, and pagination parameters from the URL (e.g. ?title=potter&field=price&direction=-1).
+     * - Syncs them with global variables : gFilterBy, gSortBy, and gQueryOptions.page.idx.
+     * - Updates form fields (input/select/radio) to match the current values.
+     * - Opens the book modal automatically if a bookId exists in the URL.
+     * 
+     * Goal : 
+     * - Maintain view state across refreshes and when sharing links.
+     **/
     if (!window.location.search) return; // If there are no query parameters, skip parsing //
 
     const queryParams = new URLSearchParams(window.location.search);
     
     const title     =  queryParams.get('title')     || EMPTY_STRING;
     const rating    = +queryParams.get('rating')    || 0;
-    const field     = queryParams.get('field')      || EMPTY_STRING;
+    const field     =  queryParams.get('field')     || EMPTY_STRING;
     const direction = +queryParams.get('direction') || 1;
     const pageIdx   = +queryParams.get('pageIdx')   || 0;
 
@@ -460,16 +515,16 @@ function readQueryParams() {
 
     const elFilterInput  = document.querySelector('.filter-container input');
     const elFilterSelect = document.querySelector('.filter-container select');
-    const elSortInput    = document.querySelector(`.sort-container input[value="${direction}"]`);
+    const elRadioBtn     = document.querySelector(`.sort-container input[value="${direction}"]`);
     const elSortSelect   = document.querySelector('.sort-container select');
     
     elFilterInput.value  = title;
     elFilterSelect.value = rating;
-    elSortInput.checked  = true;
+    elRadioBtn.checked   = true;
     elSortSelect.value   = field;
 
     /**
-     * [Notes] :
+     * [Description] :
      * - If a bookId exists in the URL (e.g. : ?bookId=abc123), automatically open the book details modal for that book.
      * - This enables bookmarking and deep linking directly to a book.
      **/
@@ -478,12 +533,28 @@ function readQueryParams() {
         onShowBookDetails(bookId);
     }
 
-    const isDisabled   = !field;
+    const isDisabled  = (field === EMPTY_STRING);
     const elRadioBtns = document.querySelectorAll('.radio-btn');
-    elRadioBtns.forEach(radio => radio.toggleAttribute('disabled', isDisabled));
+    elRadioBtns.forEach(radioBtn => radioBtn.toggleAttribute('disabled', isDisabled));
 }
 
 function setQueryParams() {
+    /**
+     * [Description] :
+     * 
+     * Purpose :
+     * - Updates the browser's URL with the current app state (filters, sorting, pagination)
+     *   without reloading the page.
+     * 
+     * Logic :
+     * 1. Creates a URLSearchParams object and adds current filter/sort/page values if they exist.
+     * 2. Constructs a new URL string using the current location and the updated parameters.
+     * 3. Uses the History API (`pushState`) to update the URL in the address bar.
+     * 
+     * Notes :
+     * - This enables deep linking and bookmarking of the current view state.
+     * - Also allows restoring state on refresh or share.
+     **/
     const queryParams = new URLSearchParams();
 
     if (gFilterBy.title) {
@@ -505,17 +576,18 @@ function setQueryParams() {
                    window.location.host     +
                    window.location.pathname + '?' + queryParams.toString();
     
-    window.history.pushState({ path: newUrl }, '', newUrl);
+    window.history.pushState({ path: newUrl }, EMPTY_STRING, newUrl);
 }
 
 // Sort Books //
 function onSetSortByField(field) {
     setSortByField(field);
 
-    const isDisabled = !field;
+    const isDisabled = (field === EMPTY_STRING);
 
-    const elSortContainer = document.querySelectorAll('.sort-container input[type="radio"]');
-    elSortContainer.forEach(radio => { radio.disabled = isDisabled; });
+    // Disable radio buttons if no sort field is selected //
+    const elRadioBtns = document.querySelectorAll('.sort-container input[type="radio"]');
+    elRadioBtns.forEach(radioBtn => { radioBtn.disabled = isDisabled; });
 
     setPageIdx(0);
     setQueryParams();
@@ -556,7 +628,7 @@ function onUpdatePaginationButtons() {
 
     const elPrevBtn     = document.querySelector('.btn-prev');
     const elNextBtn     = document.querySelector('.btn-next');
-    const shouldDisable = totalPages <= 1;
+    const shouldDisable = (totalPages <= 1);
 
     elPrevBtn.disabled  = shouldDisable;
     elNextBtn.disabled  = shouldDisable;
@@ -566,6 +638,24 @@ function onUpdatePaginationButtons() {
 }
 
 function renderNavigatePageNumbers() {
+    /**
+     * [Description] :
+     *
+     * Purpose :
+     * - Renders dynamic pagination controls (page numbers and navigation arrows) based on the current book list.
+     * 
+     * Logic :
+     * 1. Calculates the total number of pages based on total filtered books and PAGE_SIZE.
+     * 2. If there are no pages (e.g., no books), clears the pagination UI and exits.
+     * 3. Creates "Previous" and "Next" buttons, and disables them if there's only one page.
+     * 4. Dynamically generates a button for each page number :
+     *    - Highlights the button of the current page using the 'active' class.
+     *    - Assigns onclick handlers to navigate to the corresponding page.
+     * 5. Injects the final HTML into the `.pagination-controls` container.
+     * 
+     * UI Result :
+     * ← [1] [2] [3] →  (with active and disabled states handled correctly).
+     **/
     const totalBooks  = getTotalBooksCount();
     const totalPages  = Math.ceil(totalBooks / PAGE_SIZE);
     const currPageIdx = gQueryOptions.page.idx;
@@ -573,25 +663,25 @@ function renderNavigatePageNumbers() {
     const elPagination = document.querySelector('.pagination-controls');
 
     if (totalPages === 0) {
-        elPagination.innerHTML = '';
+        elPagination.innerHTML = EMPTY_STRING;
         return;
     }
 
-    const shouldDisable = totalPages <= 1;
+    const shouldDisable = (totalPages <= 1);
 
     let strHTML = `
-        <button class="btn-prev" onclick="onChangePage(-1)" ${shouldDisable ? 'disabled' : ''}>←</button>
+        <button class="btn-prev" onclick="onChangePage(-1)" ${shouldDisable ? 'disabled' : EMPTY_STRING}>←</button>
     `;
 
     for (let i = 0; i < totalPages; i++) {
-        const isActive = (i === currPageIdx) ? 'active' : '';
+        const isActive = (i === currPageIdx) ? 'active' : EMPTY_STRING;
         strHTML += `
             <button class="btn-page ${isActive}" onclick="onGoToPage(${i})">${i + 1}</button> 
         `;
     }
 
     strHTML += `
-        <button class="btn-next" onclick="onChangePage(1)" ${shouldDisable ? 'disabled' : ''}>→</button>
+        <button class="btn-next" onclick="onChangePage(1)" ${shouldDisable ? 'disabled' : EMPTY_STRING}>→</button>
     `;
 
     elPagination.innerHTML = strHTML;
@@ -605,7 +695,7 @@ function onGoToPage(pageIdx) {
 
 // Sort Headers //
 function renderSortSymbol(field) {
-    if (gSortBy.field !== field) return '';
+    if (gSortBy.field !== field) return EMPTY_STRING;
     return gSortBy.direction === 1 ? '(+)' : '(─)';
 }
 
@@ -626,81 +716,4 @@ function onHeaderSortClick(field) {
     setPageIdx(0);
     setQueryParams();
     renderBooks();
-}
-
-/*********************************************************/
-
-/* Not Used */
-function onAddBook() {
-    /**
-     * [Notes] :
-     * - This function is no longer used since we replaced the functionality.
-     * - We now use a modal dialog to add a new book instead of using prompt dialogs.
-     **/
-    const title = prompt('Enter Book Title  : ');
-    if (!isValidTitle(title)) {
-        showMsg('[Error] Invalid Input. Please Enter a Valid Title.', 'error');   
-        return;
-    }
-
-    const price = +prompt('Enter Book Price : ');
-    if (!isValidPrice(price)) {
-        showMsg('[Error] Invalid Input. Please Enter a Valid Price.', 'error')
-        return;
-    }
-
-    addBook(title, price);
-    renderBooks();
-    
-    showMsg(`[Success] Book ["${title}"] - Added Successfully.`, 'success');
-}
-
-/* Not Used */
-function lockTitleColumnWidth() {
-    /**
-     * [Notes] :
-     * - This function is currently unused.
-     * - It dynamically sets the width of the "Title" column.
-     * - based on the widest content among the title cells.
-     * - However, column widths are now controlled via <colgroup> and CSS so this function is no longer necessary.
-     **/
-    const elTitleCells = document.querySelectorAll('td:first-child');
-    if (!elTitleCells.length) return;
-
-    let maxWidth = 0;
-
-    elTitleCells.forEach(titleCell => {
-        const width = titleCell.offsetWidth;
-        if (width > maxWidth) maxWidth = width;
-    })
-
-    const header = document.querySelector('th:first-child');
-    if (header) header.style.width = maxWidth + 'px';
-
-    elTitleCells.forEach(titleCell => {
-        titleCell.style.width = maxWidth + 'px';
-    });
-}
-
-/* Not Used */
-function onUpdateBook(bookId) {
-    const book         = getBookById(bookId);
-    const currentPrice = book.price;
-
-    const newPrice = +prompt('Enter a New Price : ');
-    if (!(isValidPrice(newPrice))) {
-        showMsg('[Error] Invalid Input. Please Enter a Valid Price.', 'error')   
-        return;
-    }
-
-    if (newPrice === currentPrice) {
-        showMsg(`[Warning] The price is already set to ${newPrice} - Nothing to Update.`, 'warn');
-        return;
-    }
-
-    updateBookPrice(bookId, newPrice);
-    renderBooks();
-
-    const bookTitle = getBookTitle(bookId);
-    showMsg(`[Success] Book ["${bookTitle}"] - Updated Successfully.`, 'success');
 }

@@ -6,7 +6,7 @@
 /* Function Implementations */
 function setDefaultDisplayMode() {
     /**
-     * [Notes] :
+     * [Description] :
      * - Initializes the display mode to 'table' by default.
      * - If a different mode (e.g. : 'grid') is stored in localStorage, it overrides it and forces 'table' as the default view on app load.
      **/
