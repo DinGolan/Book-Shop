@@ -238,10 +238,13 @@ function onResetState() {
     elSortSelect.selectedIndex   = 0;
     elSortInput.forEach(radioBtn => radioBtn.checked = false);
 
+    const elSortRadios = document.querySelectorAll('.radio-btn');
+    elSortRadios.forEach(radio => radio.toggleAttribute('disabled', true));
+
+    onUpdateClearBtnState();
     setQueryParams();
     renderBooks();
 }
-
 
 // Show Message //
 function showMsg(txt, type) {
@@ -474,6 +477,10 @@ function readQueryParams() {
     if (bookId) {
         onShowBookDetails(bookId);
     }
+
+    const isDisabled   = !field;
+    const elRadioBtns = document.querySelectorAll('.radio-btn');
+    elRadioBtns.forEach(radio => radio.toggleAttribute('disabled', isDisabled));
 }
 
 function setQueryParams() {
